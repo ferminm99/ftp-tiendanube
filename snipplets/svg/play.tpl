@@ -1,0 +1,1 @@
+<svg class="{{ fa_custom_class }}" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0-.1l.4 511.4 447-244L0-.1z"/></svg>
