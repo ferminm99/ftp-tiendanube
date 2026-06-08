@@ -594,42 +594,190 @@
     });
 </script>
 {% endif %}
+<div id="talles-modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+    <div style="background:white; padding:0; width:90%; max-width:500px; border-radius:12px; position:relative; max-height:85vh; display:flex; flex-direction:column; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow:hidden;">
+        
+        <div style="background:#4e342e; color:white; padding:15px; text-align:center; position:relative;">
+            <h3 style="margin:0; font-weight:900; font-size:18px;">Guía Oficial de Medidas</h3>
+            <button onclick="document.getElementById('talles-modal').style.display='none'" style="position:absolute; right:15px; top:12px; border:none; background:none; font-size:24px; cursor:pointer; color:white;">&times;</button>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; border-bottom:2px solid #f0f0f0; background:#fafafa;">
+            <button id="btn-alto" onclick="abrirTabTalles('alto')" style="flex:1; border:none; border-bottom:3px solid #4e342e; background:none; padding:12px 5px; font-weight:bold; cursor:pointer; color:#4e342e; font-size:13px;">Tiro Alto</button>
+            <button id="btn-bajo" onclick="abrirTabTalles('bajo')" style="flex:1; border:none; border-bottom:3px solid transparent; background:none; padding:12px 5px; font-weight:bold; cursor:pointer; color:#999; font-size:13px;">Tiro Bajo</button>
+            <button id="btn-ninos" onclick="abrirTabTalles('ninos')" style="flex:1; border:none; border-bottom:3px solid transparent; background:none; padding:12px 5px; font-weight:bold; cursor:pointer; color:#999; font-size:13px;">Niños</button>
+        </div>
 
-{# --- SCRIPT PERSONALIZADO V12: BOTONERA + OCULTAR REPETIDOS EN CATÁLOGO --- #}
+        <div style="overflow-y:auto; padding:15px;">
+            
+            <details style="background: #fdfaf7; border: 1px solid #e0d0cc; border-radius: 8px; margin-bottom: 15px; padding: 12px; cursor: pointer;">
+                <summary style="font-weight: bold; color: #4e342e; font-size: 13px; list-style: none; display: flex; align-items: center; justify-content: space-between; outline: none;">
+                    <span style="display: flex; align-items: center; gap: 5px;">📐 ¿Cómo tomar tus medidas?</span>
+                    <span style="font-size: 10px; color: #8d6e63;">Desplegar ▼</span>
+                </summary>
+                <div style="margin-top: 12px; font-size: 12.5px; color: #444; cursor: default; line-height: 1.4; border-top: 1px dashed #e0d0cc; padding-top: 10px;">
+                    <div style="margin-bottom: 10px;">
+                        <strong style="color: #4e342e;">• Cintura:</strong> Primero podés medir tu cintura a la altura del ombligo y usar esa medida. Si preferís, también podés apoyar un pantalón cerrado sobre una mesa, medir de punta a punta a la altura de la cintura y multiplicar por dos.
+                    </div>
+                    <div>
+                        <strong style="color: #4e342e;">• Largo / Alto:</strong> Medí por el lateral externo de la pierna, desde la cintura hasta el borde inferior del dobladillo.
+                    </div>
+                </div>
+            </details>
+            
+            <div id="tab-alto">
+                <div style="background:#e8f4f8; color:#0277bd; padding:8px; border-radius:6px; font-size:12px; text-align:center; margin-bottom:15px;">
+                    📏 <strong>Largos Especiales:</strong> Corto (-6cm) / Largo (+6cm)
+                </div>
+                <table style="width:100%; border-collapse:collapse; text-align:center; font-size:14px;">
+                    <tr style="background:#f4f4f4; border-bottom:2px solid #ddd;">
+                        <th style="padding:10px;">Talle</th><th style="padding:10px;">Cintura</th><th style="padding:10px;">Largo</th>
+                    </tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">36</td><td>72 cm</td><td>100 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">38</td><td>76 cm</td><td>101 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">40</td><td>80 cm</td><td>103 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">42</td><td>84 cm</td><td>103 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">44</td><td>88 cm</td><td>104 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">46</td><td>92 cm</td><td>104 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">48</td><td>96 cm</td><td>104 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">50</td><td>100 cm</td><td>104 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">52</td><td>104 cm</td><td>105 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">54</td><td>108 cm</td><td>107 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">56</td><td>112 cm</td><td>107 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">58</td><td>116 cm</td><td>107 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">60</td><td>120 cm</td><td>107 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">62</td><td>124 cm</td><td>107 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">64</td><td>128 cm</td><td>107 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">66</td><td>132 cm</td><td>107 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">68</td><td>136 cm</td><td>107 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">70</td><td>140 cm</td><td>107 cm</td></tr>
+                </table>
+            </div>
+
+            <div id="tab-bajo" style="display:none;">
+                <div style="color:#666; font-size:13px; text-align:center; margin-bottom:15px; font-style:italic;">
+                    En tiro bajo (Dama) los talles llegan hasta el 52.
+                </div>
+                <table style="width:100%; border-collapse:collapse; text-align:center; font-size:14px;">
+                    <tr style="background:#f4f4f4; border-bottom:2px solid #ddd;">
+                        <th style="padding:10px;">Talle</th><th style="padding:10px;">Cintura</th><th style="padding:10px;">Largo</th>
+                    </tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">32</td><td>68 cm</td><td>96 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">34</td><td>72 cm</td><td>96 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">36</td><td>76 cm</td><td>97 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">38</td><td>80 cm</td><td>97 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">40</td><td>84 cm</td><td>100 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">42</td><td>88 cm</td><td>100 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">44</td><td>92 cm</td><td>100 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">46</td><td>96 cm</td><td>101 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">48</td><td>100 cm</td><td>101 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">50</td><td>104 cm</td><td>101 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">52</td><td>108 cm</td><td>102 cm</td></tr>
+                </table>
+            </div>
+
+            <div id="tab-ninos" style="display:none;">
+                <table style="width:100%; border-collapse:collapse; text-align:center; font-size:14px; margin-top:10px;">
+                    <tr style="background:#f4f4f4; border-bottom:2px solid #ddd;">
+                        <th style="padding:10px;">Talle</th><th style="padding:10px;">Cintura</th><th style="padding:10px;">Largo (Alto)</th>
+                    </tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">0</td><td>52 cm</td><td>45 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">2</td><td>56 cm</td><td>51 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">4</td><td>58 cm</td><td>57 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">6</td><td>60 cm</td><td>62 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">8</td><td>62 cm</td><td>68 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">10</td><td>64 cm</td><td>74 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">12</td><td>66 cm</td><td>80 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">14</td><td>68 cm</td><td>85 cm</td></tr>
+                    <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">16</td><td>70 cm</td><td>91 cm</td></tr>
+                </table>
+            </div>
+
+        </div>
+        
+        <div style="padding:15px; border-top:1px solid #eee; background:#fff;">
+            <button onclick="document.getElementById('talles-modal').style.display='none'" style="width:100%; padding:12px; background:#4e342e; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:15px;">Cerrar Tabla</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function abrirTabTalles(tab) {
+    document.getElementById('tab-alto').style.display = 'none';
+    document.getElementById('tab-bajo').style.display = 'none';
+    document.getElementById('tab-ninos').style.display = 'none';
+    
+    document.getElementById('btn-alto').style.color = '#999';
+    document.getElementById('btn-alto').style.borderBottomColor = 'transparent';
+    document.getElementById('btn-bajo').style.color = '#999';
+    document.getElementById('btn-bajo').style.borderBottomColor = 'transparent';
+    document.getElementById('btn-ninos').style.color = '#999';
+    document.getElementById('btn-ninos').style.borderBottomColor = 'transparent';
+    
+    document.getElementById('tab-' + tab).style.display = 'block';
+    document.getElementById('btn-' + tab).style.color = '#4e342e';
+    document.getElementById('btn-' + tab).style.borderBottomColor = '#4e342e';
+}
+</script>
+
+<script>
+// Lógica simple para manejar las pestañas del modal
+function abrirTabTalles(tab) {
+    // Ocultar todos los contenidos
+    document.getElementById('tab-alto').style.display = 'none';
+    document.getElementById('tab-bajo').style.display = 'none';
+    document.getElementById('tab-ninos').style.display = 'none';
+    
+    // Resetear estilos de los botones
+    document.getElementById('btn-alto').style.color = '#999';
+    document.getElementById('btn-alto').style.borderBottomColor = 'transparent';
+    document.getElementById('btn-bajo').style.color = '#999';
+    document.getElementById('btn-bajo').style.borderBottomColor = 'transparent';
+    document.getElementById('btn-ninos').style.color = '#999';
+    document.getElementById('btn-ninos').style.borderBottomColor = 'transparent';
+    
+    // Activar el tab seleccionado
+    document.getElementById('tab-' + tab).style.display = 'block';
+    document.getElementById('btn-' + tab).style.color = '#4e342e';
+    document.getElementById('btn-' + tab).style.borderBottomColor = '#4e342e';
+}
+</script>
+
+{# --- SCRIPT DEFINITIVO V14: INTERFAZ MINIMALISTA + GUÍA DE TALLES INTEGRADA --- #}
 <script type="text/javascript">
 LS.ready.then(function(){
     
-    // ----------------------------------------
-    // RUTA 1: DETALLE DE PRODUCTO (Mantiene lo que ya funciona)
-    // ----------------------------------------
     if (document.body.classList.contains('template-product')) {
         var h1Nativo = document.querySelector('h1');
+        
         if (h1Nativo) {
             var tituloCompleto = h1Nativo.textContent.trim();
+            
             if (tituloCompleto.indexOf('-') !== -1) {
                 var partes = tituloCompleto.split('-');
                 var nombreBase = partes[0].trim();
                 var colorActual = partes[1].trim().toLowerCase();
                 
+                // 1. Limpiamos el H1 para que solo quede el nombre base
                 h1Nativo.textContent = nombreBase;
                 
+                // 2. Paleta con los códigos reales de tus telas
                 var paletaColores = {
-                    'marron': '#8B4513', 'marrón': '#8B4513',
-                    'negro': '#000000',
-                    'azul': '#0000FF',
-                    'verde': '#008000',
-                    'rojo': '#FF0000',
-                    'gris': '#808080'
+                    'marron': '#7c533c', 'marrón': '#7c533c',
+                    'negro': '#1a1a1a',
+                    'azul': '#1d3557',
+                    'verde': '#2d4a3e',
+                    'rojo': '#b22222',
+                    'gris': '#6c757d'
                 };
 
-                var htmlBotonera = '<div id="custom-color-box" style="margin: 20px 0; padding: 12px; background: #f9f9f9; border: 1px dashed #ccc; display: block !important; clear: both;">' +
-                                   '<p style="font-weight:700; margin-bottom:8px; font-size:14px; color:#333; text-transform: uppercase;">COLOR DISPONIBLE:</p>' +
-                                   '<div class="color-variants-holder" style="display:flex; gap:12px; flex-wrap: wrap;"></div>' +
+                // 3. Inyectamos la botonera de colores JUSTO debajo del título (Ultra minimalista)
+                var htmlBotonera = '<div id="custom-color-box" style="margin: 15px 0 5px 0; display: block; clear: both;">' +
+                                   '<div class="color-variants-holder" style="display:flex; gap:10px; flex-wrap: wrap; align-items: center;"></div>' +
                                    '</div>';
-                
                 h1Nativo.insertAdjacentHTML('afterend', htmlBotonera);
 
-                function agregarBotonColorNativo(nombreColor, urlDestino) {
+                function agregarBotonColor(nombreColor, urlDestino) {
                     var colorClean = nombreColor.toLowerCase().trim();
                     var contenedor = document.querySelector('.color-variants-holder');
                     if (!contenedor) return;
@@ -639,19 +787,19 @@ LS.ready.then(function(){
                     var codigoColor = paletaColores[colorClean] || '#CCCCCC';
                     var esElActual = (colorClean === colorActual);
                     
-                    var estiloCirculo = 'display:inline-block; width:35px; height:35px; border-radius:50%; background-color:' + codigoColor + '; border: 2px solid ' + (esElActual ? '#333' : '#ddd') + '; box-shadow: ' + (esElActual ? '0 0 0 2px #fff, 0 0 4px rgba(0,0,0,0.4)' : 'none') + '; cursor:pointer; margin-right:5px; transition: transform 0.2s;';
+                    // Círculos más chicos, sin bordes toscos ni fondos grises raros
+                    var estiloCirculo = 'display:inline-block; width:28px; height:28px; border-radius:50%; background-color:' + codigoColor + '; border: 1px solid ' + (esElActual ? '#000' : '#e0e0e0') + '; box-shadow: ' + (esElActual ? '0 0 0 2px #fff, 0 0 0 3px #000' : 'none') + '; cursor:pointer; transition: transform 0.2s;';
                     
                     var botonHtml = '<a href="' + urlDestino + '" title="' + nombreColor + '" data-color="' + tituloID + '" style="' + estiloCirculo + '"></a>';
                     contenedor.insertAdjacentHTML('beforeend', botonHtml);
                 }
 
+                // Carga de hermanos (Niños / Adultos)
                 if (tituloCompleto.toLowerCase().indexOf('niño') !== -1 || tituloCompleto.toLowerCase().indexOf('nino') !== -1) {
-                    var urlMarronNinos = "/productos/bombacha-de-grafa-ninos-tiro-alto-marron/";
-                    var urlNegroNinos = "/productos/bombacha-de-grafa-ninos-tiro-alto-negro/";
-                    agregarBotonColorNativo('Marrón', urlMarronNinos);
-                    agregarBotonColorNativo('Negro', urlNegroNinos);
+                    agregarBotonColor('Marrón', "/productos/bombacha-de-grafa-ninos-tiro-alto-marron/");
+                    agregarBotonColor('Negro', "/productos/bombacha-de-grafa-ninos-tiro-alto-negro/");
                 } else {
-                    agregarBotonColorNativo(partes[1].trim(), window.location.pathname);
+                    agregarBotonColor(partes[1].trim(), window.location.pathname);
                     var palabraClaveBusqueda = nombreBase.split(' ')[0];
                     if(nombreBase.split(' ')[1]) palabraClaveBusqueda += ' ' + nombreBase.split(' ')[1];
                     
@@ -667,7 +815,9 @@ LS.ready.then(function(){
                                     Object.keys(paletaColores).forEach(function(colorNombre) {
                                         if (href.indexOf(colorNombre) !== -1 || textoLink.indexOf(colorNombre) !== -1) {
                                             if (href.indexOf('azul') !== -1 && href.indexOf('todo') !== -1) {
-                                                agregarBotonColorNativo('Azul', href);
+                                                agregarBotonColor('Azul', href);
+                                            } else if (href.indexOf('azul') === -1) {
+                                                agregarBotonColor(colorNombre, href);
                                             }
                                         }
                                     });
@@ -675,37 +825,64 @@ LS.ready.then(function(){
                             });
                         });
                 }
+
+                // 4. Inyección de la Guía de Talles CORRECTA
+                // Apuntamos estrictamente al formulario del producto, no al header
+                var formProducto = document.querySelector('.js-product-form');
+                if (formProducto) {
+                    // Buscamos el contenedor exacto de los talles dentro del form
+                    var contenedorTalles = formProducto.querySelector('.js-product-variants') || formProducto.querySelector('.js-variant-option');
+                    
+                    if (contenedorTalles) {
+                        var htmlLinkTalles = '<div style="margin: 10px 0;">' +
+                                             '<a href="#" onclick="document.getElementById(\'talles-modal\').style.display=\'flex\'; return false;" ' +
+                                             'style="color:#5d4037; font-weight:700; text-decoration:underline; font-size:13px; cursor:pointer; display:inline-flex; align-items:center;">' +
+                                             '<svg style="width:16px; height:16px; margin-right:5px; fill:currentColor;" viewBox="0 0 24 24"><path d="M2 4h20v16H2V4zm2 2v12h16V6H4zm2 2h2v8H6V8zm4 0h2v4h-2V8zm4 0h2v8h-2V8z"/></svg>' +
+                                             'Ver tabla de medidas' +
+                                             '</a></div>';
+                        // Lo insertamos justo después de los circulitos de los talles
+                        contenedorTalles.insertAdjacentHTML('beforeend', htmlLinkTalles);
+                    }
+                }
+
+                // 5. TRUCO SEO: CANONICAL DINÁMICO
+                // Le decimos a Google que si la URL termina en un color, indexe la versión genérica
+                var tagCanonical = document.querySelector('link[rel="canonical"]');
+                if (tagCanonical) {
+                    var currentPath = window.location.pathname;
+                    // Extraemos la última palabra de la URL
+                    var ultimoSegmento = currentPath.split('-').pop().replace('/', '').toLowerCase();
+                    
+                    var coloresSEO = ['marron', 'negro', 'azul', 'verde', 'rojo', 'gris'];
+                    
+                    // Si la última palabra es un color, modificamos el href que lee Googlebot
+                    if (coloresSEO.includes(ultimoSegmento)) {
+                        var cleanUrl = window.location.origin + currentPath.replace('-' + ultimoSegmento + '/', '/');
+                        tagCanonical.setAttribute('href', cleanUrl);
+                        console.log("[SEO] Canonical unificado apuntando a: " + cleanUrl);
+                    }
+                }
             }
         }
     }
 
-    // ----------------------------------------
-    // RUTA 2: OCULTAR REPETIDOS EN EL CATÁLOGO (ACTUALIZADO)
-    // ----------------------------------------
+    // Ocultar repetidos en catálogo (Ruta 2 original)
     if (document.body.classList.contains('template-category') || document.body.classList.contains('template-search') || document.body.classList.contains('template-home')) {
-        console.log("[CATALOGO] Buscando productos repetidos para ocultar...");
         var productosVistos = {};
-
-        // Recorremos todos los elementos de título del catálogo en Trend
         var titulosCatalogo = document.querySelectorAll('.js-item-name, .item-name, .product-title, h3, h2');
         
         titulosCatalogo.forEach(function(elementoTitulo) {
             var textoCompleto = elementoTitulo.textContent.trim();
-            
-            // Si el título contiene un guión, analizamos si es una variante
             if (textoCompleto.indexOf('-') !== -1) {
                 var partesCat = textoCompleto.split('-');
                 var nombreBaseCat = partesCat[0].trim();
                 
                 if (productosVistos[nombreBaseCat]) {
-                    // SI YA LO VIMOS: Buscamos la tarjeta contenedora del producto en Trend y la ocultamos por completo
                     var tarjetaProducto = elementoTitulo.closest('.js-product-container, .js-item-product, .item, .col-xs-6, .col-sm-4, .product-cell, [data-store="product-item"]');
                     if (tarjetaProducto) {
                         tarjetaProducto.style.setProperty('display', 'none', 'important');
-                        console.log("[CATALOGO] Ocultado repetido de:", nombreBaseCat);
                     }
                 } else {
-                    // SI ES EL PRIMERO: Lo registramos como el "Padre" visible y le limpiamos el "- Color" para que quede estético
                     productosVistos[nombreBaseCat] = true;
                     elementoTitulo.textContent = nombreBaseCat;
                 }
