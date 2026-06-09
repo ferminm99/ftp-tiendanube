@@ -700,11 +700,50 @@
         </div>
     </div>
 </div>
-{# --- SCRIPT DEFINITIVO V16: RUTAS FIJAS CONTROLADAS SIN BUSCADOR --- #}
+
+<script>
+function abrirTabTalles(tab) {
+    document.getElementById('tab-alto').style.display = 'none';
+    document.getElementById('tab-bajo').style.display = 'none';
+    document.getElementById('tab-ninos').style.display = 'none';
+    
+    document.getElementById('btn-alto').style.color = '#999';
+    document.getElementById('btn-alto').style.borderBottomColor = 'transparent';
+    document.getElementById('btn-bajo').style.color = '#999';
+    document.getElementById('btn-bajo').style.borderBottomColor = 'transparent';
+    document.getElementById('btn-ninos').style.color = '#999';
+    document.getElementById('btn-ninos').style.borderBottomColor = 'transparent';
+    
+    document.getElementById('tab-' + tab).style.display = 'block';
+    document.getElementById('btn-' + tab).style.color = '#4e342e';
+    document.getElementById('btn-' + tab).style.borderBottomColor = '#4e342e';
+}
+</script>
+
+{# --- SCRIPT DEFINITIVO V24 --- #}
 <script type="text/javascript">
 LS.ready.then(function(){
     
     if (document.body.classList.contains('template-product')) {
+        
+        // 1. ASESINO DE VARIANTES SEGURO
+        var intentos = 0;
+        var matarVariante = setInterval(function() {
+            var labels = document.querySelectorAll('.js-product-variants label, .form-group label, .variant-label, .js-variant-name');
+            labels.forEach(function(label) {
+                var texto = label.textContent.toLowerCase().trim();
+                if (texto.indexOf('color') !== -1) {
+                    // Solo ocultamos el div chiquito que envuelve al input, no toda la fila
+                    var caja = label.closest('.js-variant-option') || label.closest('.js-product-variants-group') || label.parentElement;
+                    if (caja) {
+                        caja.style.setProperty('display', 'none', 'important');
+                    }
+                }
+            });
+            intentos++;
+            if (intentos > 40) clearInterval(matarVariante);
+        }, 100);
+
         var h1Nativo = document.querySelector('h1');
         
         if (h1Nativo) {
@@ -714,59 +753,77 @@ LS.ready.then(function(){
                 var partes = tituloCompleto.split('-');
                 var nombreBase = partes[0].trim();
                 var colorActual = partes[1].trim().toLowerCase();
+                var nombreBaseLower = nombreBase.toLowerCase();
                 
-                // 1. Limpiamos el H1 para el Front-End
                 h1Nativo.textContent = nombreBase;
                 
-                // 2. Mapeo estricto de tus colores y sus códigos de tela
+                // 2. PALETA GLOBAL
                 var paletaColores = {
-                    'marron': '#7c533c', 'marrón': '#7c533c',
-                    'negro': '#1a1a1a',
                     'azul': '#1d3557',
-                    'verde': '#2d4a3e'
+                    'negro': '#1a1a1a',
+                    'marron': '#7c533c', 'marrón': '#7c533c',
+                    'chocolate': '#3d2314',
+                    'verde': '#2d4a3e',
+                    'bordo': '#58111a', 'bordó': '#58111a', 'bordeaux': '#58111a',
+                    'beige': '#ede6d6', 'bege': '#ede6d6',
+                    'gris': '#8a8a8a',
+                    'blanco': '#ffffff'
                 };
 
-                // 3. Render de la caja de la botonera
+                // 3. MAPEO DE TELAS
+                var coloresAInyectar = [];
+
+                if (nombreBaseLower.indexOf('grafa') !== -1) {
+                    coloresAInyectar = ['verde', 'negro', 'azul', 'marron'];
+                } 
+                else if (nombreBaseLower.indexOf('poplin') !== -1 || nombreBaseLower.indexOf('poplín') !== -1) {
+                    coloresAInyectar = ['gris', 'verde', 'azul', 'negro', 'marron', 'beige'];
+                } 
+                else if (nombreBaseLower.indexOf('corderoy') !== -1) {
+                    coloresAInyectar = ['azul', 'verde', 'negro', 'marron', 'chocolate', 'gris'];
+                } 
+                else if (nombreBaseLower.indexOf('alpargata') !== -1) {
+                    coloresAInyectar = ['azul', 'negro', 'bordo'];
+                } 
+                else {
+                    coloresAInyectar = [colorActual];
+                }
+
+                if (!coloresAInyectar.includes(colorActual)) {
+                    coloresAInyectar.push(colorActual);
+                }
+
+                // 4. RENDER DE BOTONERA INSTANTÁNEA
                 var htmlBotonera = '<div id="custom-color-box" style="margin: 15px 0 5px 0; display: block; clear: both;">' +
                                    '<div class="color-variants-holder" style="display:flex; gap:10px; flex-wrap: wrap; align-items: center;"></div>' +
                                    '</div>';
                 h1Nativo.insertAdjacentHTML('afterend', htmlBotonera);
 
-                function agregarBotonColor(nombreColor, urlDestino) {
-                    var colorClean = nombreColor.toLowerCase().trim();
-                    var contenedor = document.querySelector('.color-variants-holder');
-                    if (!contenedor) return;
-                    var tituloID = colorClean.replace('ó', 'o');
+                var contenedor = document.querySelector('.color-variants-holder');
 
-                    var codigoColor = paletaColores[colorClean] || '#CCCCCC';
-                    var esElActual = (colorClean === colorActual);
-                    
-                    var estiloCirculo = 'display:inline-block; width:28px; height:28px; border-radius:50%; background-color:' + codigoColor + '; border: 1px solid ' + (esElActual ? '#000' : '#e0e0e0') + '; box-shadow: ' + (esElActual ? '0 0 0 2px #fff, 0 0 0 3px #000' : 'none') + '; cursor:pointer; transition: transform 0.2s;';
-                    
-                    var botonHtml = '<a href="' + urlDestino + '" title="' + nombreColor + '" data-color="' + tituloID + '" style="' + estiloCirculo + '"></a>';
-                    contenedor.insertAdjacentHTML('beforeend', botonHtml);
+                if (contenedor) {
+                    var currentPath = window.location.pathname; 
+                    var regexColor = new RegExp('-' + colorActual + '/?$');
+                    var urlBase = currentPath.replace(regexColor, '');
+
+                    coloresAInyectar.forEach(function(color) {
+                        var codigoColor = paletaColores[color] || '#CCCCCC';
+                        var esElActual = (color === colorActual);
+                        
+                        var nombreMostrar = color.charAt(0).toUpperCase() + color.slice(1);
+                        if (nombreMostrar === 'Marron') nombreMostrar = 'Marrón';
+                        if (nombreMostrar === 'Bordo') nombreMostrar = 'Bordó';
+
+                        var urlDestino = urlBase + '-' + color + '/';
+                        
+                        var estiloCirculo = 'display:inline-block; width:28px; height:28px; border-radius:50%; background-color:' + codigoColor + '; border: 1px solid ' + (esElActual ? '#000' : '#e0e0e0') + '; box-shadow: ' + (esElActual ? '0 0 0 2px #fff, 0 0 0 3px #000' : 'none') + '; cursor:pointer; transition: transform 0.2s;';
+                        
+                        var botonHtml = '<a href="' + urlDestino + '" title="' + nombreMostrar + '" data-color="' + color + '" style="' + estiloCirculo + '"></a>';
+                        contenedor.insertAdjacentHTML('beforeend', botonHtml);
+                    });
                 }
 
-                // 4. GENERACIÓN DE ENLACES ABSOLUTOS (A prueba de balas)
-                var currentPath = window.location.pathname; // ej: /productos/bombacha-de-grafa-adultos-tiro-alto-azul/
-                
-                if (tituloCompleto.toLowerCase().indexOf('niño') !== -1 || tituloCompleto.toLowerCase().indexOf('nino') !== -1) {
-                    // Flujo Niños
-                    agregarBotonColor('Marrón', "/productos/bombacha-de-grafa-ninos-tiro-alto-marron/");
-                    agregarBotonColor('Negro', "/productos/bombacha-de-grafa-ninos-tiro-alto-negro/");
-                } else {
-                    // Flujo Adultos Dinámico por reemplazo de string
-                    // Tomamos la URL base cortando el color actual (ej: corta "-azul/")
-                    var urlBase = currentPath.replace('-' + colorActual + '/', ''); 
-                    
-                    // Armamos a mano los 4 botones apuntando directo a las URLs del Excel
-                    agregarBotonColor('Azul', urlBase + '-azul/');
-                    agregarBotonColor('Negro', urlBase + '-negro/');
-                    agregarBotonColor('Marrón', urlBase + '-marron/');
-                    agregarBotonColor('Verde', urlBase + '-verde/');
-                }
-
-                // 5. Inyección de la tabla de medidas (Se mantiene igual)
+                // 5. Inyección de la tabla de medidas
                 var formProducto = document.querySelector('.js-product-form');
                 if (formProducto) {
                     var contenedorTalles = formProducto.querySelector('.js-product-variants') || formProducto.querySelector('.js-variant-option');
@@ -781,42 +838,38 @@ LS.ready.then(function(){
                     }
                 }
 
-                // 6. Normalización del Canonical (Se mantiene igual)
+                // 6. Normalización del Canonical
                 var tagCanonical = document.querySelector('link[rel="canonical"]');
                 if (tagCanonical) {
-                    var coloresSEO = ['marron', 'negro', 'azul', 'verde'];
-                    if (coloresSEO.includes(colorActual)) {
-                        var cleanUrl = window.location.origin + currentPath.replace('-' + colorActual + '/', '/');
-                        tagCanonical.setAttribute('href', cleanUrl);
-                    }
+                    var cleanUrl = window.location.origin + currentPath.replace('-' + colorActual + '/');
+                    tagCanonical.setAttribute('href', cleanUrl);
                 }
             }
         }
     }
 
-    // Ocultar duplicados en el catálogo (Se mantiene igual)
-    if (document.body.classList.contains('template-category') || document.body.classList.contains('template-search') || document.body.classList.contains('template-home')) {
-        var productosVistos = {};
-        var titulosCatalogo = document.querySelectorAll('.js-item-name, .item-name, .product-title, h3, h2');
-        
-        titulosCatalogo.forEach(function(elementoTitulo) {
+    // 7. Ocultar duplicados en TODO EL SITIO (Catálogo, Home y Productos Similares)
+    var productosVistos = {};
+    var tarjetasProductos = document.querySelectorAll('.js-product-container, .js-item-product, .item, [data-store="product-item"]');
+    
+    tarjetasProductos.forEach(function(tarjeta) {
+        var elementoTitulo = tarjeta.querySelector('.js-item-name, .item-name, .product-title, h3, h2');
+        if (elementoTitulo) {
             var textoCompleto = elementoTitulo.textContent.trim();
+            
             if (textoCompleto.indexOf('-') !== -1) {
                 var partesCat = textoCompleto.split('-');
-                var nombreBaseCat = partesCat[0].trim();
+                var nombreBaseCat = partesCat[0].trim().toLowerCase();
                 
                 if (productosVistos[nombreBaseCat]) {
-                    var tarjetaProducto = elementoTitulo.closest('.js-product-container, .js-item-product, .item, .col-xs-6, .col-sm-4, .product-cell, [data-store="product-item"]');
-                    if (tarjetaProducto) {
-                        tarjetaProducto.style.setProperty('display', 'none', 'important');
-                    }
+                    tarjeta.style.setProperty('display', 'none', 'important');
                 } else {
                     productosVistos[nombreBaseCat] = true;
-                    elementoTitulo.textContent = nombreBaseCat;
+                    elementoTitulo.textContent = partesCat[0].trim();
                 }
             }
-        });
-    }
+        }
+    });
 });
 </script>
 </body>
