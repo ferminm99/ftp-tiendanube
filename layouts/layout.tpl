@@ -700,50 +700,7 @@
         </div>
     </div>
 </div>
-
-<script>
-function abrirTabTalles(tab) {
-    document.getElementById('tab-alto').style.display = 'none';
-    document.getElementById('tab-bajo').style.display = 'none';
-    document.getElementById('tab-ninos').style.display = 'none';
-    
-    document.getElementById('btn-alto').style.color = '#999';
-    document.getElementById('btn-alto').style.borderBottomColor = 'transparent';
-    document.getElementById('btn-bajo').style.color = '#999';
-    document.getElementById('btn-bajo').style.borderBottomColor = 'transparent';
-    document.getElementById('btn-ninos').style.color = '#999';
-    document.getElementById('btn-ninos').style.borderBottomColor = 'transparent';
-    
-    document.getElementById('tab-' + tab).style.display = 'block';
-    document.getElementById('btn-' + tab).style.color = '#4e342e';
-    document.getElementById('btn-' + tab).style.borderBottomColor = '#4e342e';
-}
-</script>
-
-<script>
-// Lógica simple para manejar las pestañas del modal
-function abrirTabTalles(tab) {
-    // Ocultar todos los contenidos
-    document.getElementById('tab-alto').style.display = 'none';
-    document.getElementById('tab-bajo').style.display = 'none';
-    document.getElementById('tab-ninos').style.display = 'none';
-    
-    // Resetear estilos de los botones
-    document.getElementById('btn-alto').style.color = '#999';
-    document.getElementById('btn-alto').style.borderBottomColor = 'transparent';
-    document.getElementById('btn-bajo').style.color = '#999';
-    document.getElementById('btn-bajo').style.borderBottomColor = 'transparent';
-    document.getElementById('btn-ninos').style.color = '#999';
-    document.getElementById('btn-ninos').style.borderBottomColor = 'transparent';
-    
-    // Activar el tab seleccionado
-    document.getElementById('tab-' + tab).style.display = 'block';
-    document.getElementById('btn-' + tab).style.color = '#4e342e';
-    document.getElementById('btn-' + tab).style.borderBottomColor = '#4e342e';
-}
-</script>
-
-{# --- SCRIPT DEFINITIVO V14: INTERFAZ MINIMALISTA + GUÍA DE TALLES INTEGRADA --- #}
+{# --- SCRIPT DEFINITIVO V16: RUTAS FIJAS CONTROLADAS SIN BUSCADOR --- #}
 <script type="text/javascript">
 LS.ready.then(function(){
     
@@ -758,20 +715,18 @@ LS.ready.then(function(){
                 var nombreBase = partes[0].trim();
                 var colorActual = partes[1].trim().toLowerCase();
                 
-                // 1. Limpiamos el H1 para que solo quede el nombre base
+                // 1. Limpiamos el H1 para el Front-End
                 h1Nativo.textContent = nombreBase;
                 
-                // 2. Paleta con los códigos reales de tus telas
+                // 2. Mapeo estricto de tus colores y sus códigos de tela
                 var paletaColores = {
                     'marron': '#7c533c', 'marrón': '#7c533c',
                     'negro': '#1a1a1a',
                     'azul': '#1d3557',
-                    'verde': '#2d4a3e',
-                    'rojo': '#b22222',
-                    'gris': '#6c757d'
+                    'verde': '#2d4a3e'
                 };
 
-                // 3. Inyectamos la botonera de colores JUSTO debajo del título (Ultra minimalista)
+                // 3. Render de la caja de la botonera
                 var htmlBotonera = '<div id="custom-color-box" style="margin: 15px 0 5px 0; display: block; clear: both;">' +
                                    '<div class="color-variants-holder" style="display:flex; gap:10px; flex-wrap: wrap; align-items: center;"></div>' +
                                    '</div>';
@@ -782,57 +737,39 @@ LS.ready.then(function(){
                     var contenedor = document.querySelector('.color-variants-holder');
                     if (!contenedor) return;
                     var tituloID = colorClean.replace('ó', 'o');
-                    if (contenedor.querySelector('a[data-color="' + tituloID + '"]')) return;
 
                     var codigoColor = paletaColores[colorClean] || '#CCCCCC';
                     var esElActual = (colorClean === colorActual);
                     
-                    // Círculos más chicos, sin bordes toscos ni fondos grises raros
                     var estiloCirculo = 'display:inline-block; width:28px; height:28px; border-radius:50%; background-color:' + codigoColor + '; border: 1px solid ' + (esElActual ? '#000' : '#e0e0e0') + '; box-shadow: ' + (esElActual ? '0 0 0 2px #fff, 0 0 0 3px #000' : 'none') + '; cursor:pointer; transition: transform 0.2s;';
                     
                     var botonHtml = '<a href="' + urlDestino + '" title="' + nombreColor + '" data-color="' + tituloID + '" style="' + estiloCirculo + '"></a>';
                     contenedor.insertAdjacentHTML('beforeend', botonHtml);
                 }
 
-                // Carga de hermanos (Niños / Adultos)
+                // 4. GENERACIÓN DE ENLACES ABSOLUTOS (A prueba de balas)
+                var currentPath = window.location.pathname; // ej: /productos/bombacha-de-grafa-adultos-tiro-alto-azul/
+                
                 if (tituloCompleto.toLowerCase().indexOf('niño') !== -1 || tituloCompleto.toLowerCase().indexOf('nino') !== -1) {
+                    // Flujo Niños
                     agregarBotonColor('Marrón', "/productos/bombacha-de-grafa-ninos-tiro-alto-marron/");
                     agregarBotonColor('Negro', "/productos/bombacha-de-grafa-ninos-tiro-alto-negro/");
                 } else {
-                    agregarBotonColor(partes[1].trim(), window.location.pathname);
-                    var palabraClaveBusqueda = nombreBase.split(' ')[0];
-                    if(nombreBase.split(' ')[1]) palabraClaveBusqueda += ' ' + nombreBase.split(' ')[1];
+                    // Flujo Adultos Dinámico por reemplazo de string
+                    // Tomamos la URL base cortando el color actual (ej: corta "-azul/")
+                    var urlBase = currentPath.replace('-' + colorActual + '/', ''); 
                     
-                    window.fetch('/buscar/?q=' + encodeURIComponent(palabraClaveBusqueda))
-                        .then(function(res) { return res.text(); })
-                        .then(function(htmlTexto) {
-                            var parser = new DOMParser();
-                            var docBuscado = parser.parseFromString(htmlTexto, 'text/html');
-                            docBuscado.querySelectorAll('a').forEach(function(enlace) {
-                                var href = enlace.getAttribute('href');
-                                var textoLink = enlace.textContent.trim().toLowerCase();
-                                if (href && href.indexOf('/productos/') !== -1 && href.indexOf('ninos') === -1 && href.indexOf('niño') === -1) {
-                                    Object.keys(paletaColores).forEach(function(colorNombre) {
-                                        if (href.indexOf(colorNombre) !== -1 || textoLink.indexOf(colorNombre) !== -1) {
-                                            if (href.indexOf('azul') !== -1 && href.indexOf('todo') !== -1) {
-                                                agregarBotonColor('Azul', href);
-                                            } else if (href.indexOf('azul') === -1) {
-                                                agregarBotonColor(colorNombre, href);
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-                        });
+                    // Armamos a mano los 4 botones apuntando directo a las URLs del Excel
+                    agregarBotonColor('Azul', urlBase + '-azul/');
+                    agregarBotonColor('Negro', urlBase + '-negro/');
+                    agregarBotonColor('Marrón', urlBase + '-marron/');
+                    agregarBotonColor('Verde', urlBase + '-verde/');
                 }
 
-                // 4. Inyección de la Guía de Talles CORRECTA
-                // Apuntamos estrictamente al formulario del producto, no al header
+                // 5. Inyección de la tabla de medidas (Se mantiene igual)
                 var formProducto = document.querySelector('.js-product-form');
                 if (formProducto) {
-                    // Buscamos el contenedor exacto de los talles dentro del form
                     var contenedorTalles = formProducto.querySelector('.js-product-variants') || formProducto.querySelector('.js-variant-option');
-                    
                     if (contenedorTalles) {
                         var htmlLinkTalles = '<div style="margin: 10px 0;">' +
                                              '<a href="#" onclick="document.getElementById(\'talles-modal\').style.display=\'flex\'; return false;" ' +
@@ -840,33 +777,24 @@ LS.ready.then(function(){
                                              '<svg style="width:16px; height:16px; margin-right:5px; fill:currentColor;" viewBox="0 0 24 24"><path d="M2 4h20v16H2V4zm2 2v12h16V6H4zm2 2h2v8H6V8zm4 0h2v4h-2V8zm4 0h2v8h-2V8z"/></svg>' +
                                              'Ver tabla de medidas' +
                                              '</a></div>';
-                        // Lo insertamos justo después de los circulitos de los talles
                         contenedorTalles.insertAdjacentHTML('beforeend', htmlLinkTalles);
                     }
                 }
 
-                // 5. TRUCO SEO: CANONICAL DINÁMICO
-                // Le decimos a Google que si la URL termina en un color, indexe la versión genérica
+                // 6. Normalización del Canonical (Se mantiene igual)
                 var tagCanonical = document.querySelector('link[rel="canonical"]');
                 if (tagCanonical) {
-                    var currentPath = window.location.pathname;
-                    // Extraemos la última palabra de la URL
-                    var ultimoSegmento = currentPath.split('-').pop().replace('/', '').toLowerCase();
-                    
-                    var coloresSEO = ['marron', 'negro', 'azul', 'verde', 'rojo', 'gris'];
-                    
-                    // Si la última palabra es un color, modificamos el href que lee Googlebot
-                    if (coloresSEO.includes(ultimoSegmento)) {
-                        var cleanUrl = window.location.origin + currentPath.replace('-' + ultimoSegmento + '/', '/');
+                    var coloresSEO = ['marron', 'negro', 'azul', 'verde'];
+                    if (coloresSEO.includes(colorActual)) {
+                        var cleanUrl = window.location.origin + currentPath.replace('-' + colorActual + '/', '/');
                         tagCanonical.setAttribute('href', cleanUrl);
-                        console.log("[SEO] Canonical unificado apuntando a: " + cleanUrl);
                     }
                 }
             }
         }
     }
 
-    // Ocultar repetidos en catálogo (Ruta 2 original)
+    // Ocultar duplicados en el catálogo (Se mantiene igual)
     if (document.body.classList.contains('template-category') || document.body.classList.contains('template-search') || document.body.classList.contains('template-home')) {
         var productosVistos = {};
         var titulosCatalogo = document.querySelectorAll('.js-item-name, .item-name, .product-title, h3, h2');
@@ -891,6 +819,5 @@ LS.ready.then(function(){
     }
 });
 </script>
-{# --- FIN SCRIPT PERSONALIZADO --- #}
 </body>
 </html>
