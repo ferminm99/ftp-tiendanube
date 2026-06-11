@@ -1,10 +1,5 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js" lang="{% for language in languages %}{% if language.active %}{{ language.lang }}{% endif %}{% endfor %}"> <!--<![endif]-->
-    <head>
+<html class="no-js" lang="{% for language in languages %}{% if language.active %}{{ language.lang }}{% endif %}{% endfor %}"> <head>
 		<link rel="preconnect" href="{{ store_resource_hints }}" />
 		<link rel="dns-prefetch" href="{{ store_resource_hints }}" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,17 +23,327 @@
 		{# Critical CSS needed to show first elements of store while CSS async is loading #}
 
 		<style>
-
-			{# Font families #}
-
 			{{ component(
 				'fonts',{
 					font_weights: '300, 400, 700',
 					font_settings: 'settings.main_font, settings.default_font'
 				})
 			}}
-
 			{% snipplet 'css/critical-css.tpl' %}
+            
+            /* REGLAS DE DISEÑO EXCLUSIVAS MARCA PREMIUM */
+            .js-item-product, .item, [data-store="product-item"] {
+                border: 1px solid #f5f5f5 !important;
+                border-radius: 8px !important;
+                padding: 12px !important;
+                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
+                background: #fff !important;
+            }
+            .js-item-product:hover, .item:hover, [data-store="product-item"]:hover {
+                transform: translateY(-4px) !important;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.03) !important;
+            }
+            .color-variants-holder a:hover {
+                transform: scale(1.1);
+            }
+            
+            /* OCULTAR PAGOS NATIVOS DEL PRODUCTO - SIN TOCAR TALLES NI CARRITO */
+			body.template-product .product-promotions,
+			body.template-product .js-installments-element,
+			body.template-product .js-max-installments-container,
+			body.template-product .js-product-detail-installments,
+			body.template-product .js-payment-discount-price-product,
+			body.template-product .js-payment-discount-price-product-container,
+			body.template-product .js-installments-container,
+			body.template-product .js-product-installments,
+			body.template-product [data-component="installments"],
+			body.template-product [data-store="product-installments"] {
+				display: none !important;
+			}
+
+            body.template-product #custom-minimal-prices {
+				margin: 14px 0 12px 0;
+				padding: 16px 0 8px 0;
+				clear: both;
+				font-family: inherit;
+				color: #2f2f2f;
+				border-top: 1px solid #e6ded8;
+				border-bottom: 0 !important;
+			}
+
+			body.template-product #custom-minimal-prices .em-price-row {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 18px;
+				padding: 8px 0;
+				line-height: 1.25;
+			}
+
+			body.template-product #custom-minimal-prices .em-price-label {
+				font-size: 15.5px;
+				color: #333;
+				font-weight: 600;
+			}
+
+			body.template-product #custom-minimal-prices .em-price-label small {
+				font-size: 15.5px;
+				color: #4e342e;
+				font-weight: 800;
+				margin-left: 6px;
+			}
+
+			body.template-product #custom-minimal-prices .em-price-amount {
+				font-size: 21px;
+				color: #4e342e;
+				font-weight: 800;
+				white-space: nowrap;
+				letter-spacing: -0.2px;
+			}
+
+			body.template-product #custom-minimal-prices .em-price-note {
+				margin-top: 8px;
+				padding-top: 8px;
+				border-top: 1px solid #f0ebe7;
+				font-size: 13px;
+				color: #6b6b6b;
+				line-height: 1.4;
+			}
+
+            body.template-product #custom-share-after-info {
+                margin: 16px 0 0 0;
+                padding-top: 14px;
+                clear: both;
+                border-top: 1px solid #eeeeee;
+                font-size: 13.5px;
+                color: #666;
+            }
+            body.template-product #custom-share-after-info a {
+                color: #4e342e;
+                font-weight: 700;
+                text-decoration: none;
+            }
+            body.template-product #custom-share-after-info a:hover {
+                text-decoration: underline;
+            }
+            @media (max-width: 767px) {
+                body.template-product #custom-minimal-prices .em-price-row {
+                    display: block;
+                    padding: 7px 0;
+                }
+                body.template-product #custom-minimal-prices .em-price-amount {
+                    display: block;
+                    margin-top: 2px;
+                }
+            }
+
+            /* HACK DE DESARROLLADOR: FORZAR CARRUSEL DE INICIO A ANCHO COMPLETO (FULL-WIDTH) */
+            @media (min-width: 768px) {
+                body.template-home .js-home-slider, 
+                body.template-home .home-slider,
+                body.template-home .section-slider,
+                body.template-home .carrusel-home {
+                    width: 100vw !important;
+                    position: relative !important;
+                    left: 50% !important;
+                    right: 50% !important;
+                    margin-left: -50vw !important;
+                    margin-right: -50vw !important;
+                }
+            }
+
+            /* AJUSTE V28 - producto: informacion debajo del boton sin tocar el resto */
+            body.template-product #em-product-info-after-buy {
+                margin: 22px 0 0 0;
+                clear: both;
+                font-family: inherit;
+                color: #333333;
+                max-width: 100%;
+            }
+            body.template-product #em-product-info-after-buy .em-product-description {
+                margin: 0 0 18px 0;
+                padding: 0 0 16px 0;
+                border-bottom: 1px solid #eeeeee;
+            }
+            body.template-product #em-product-info-after-buy .em-product-description-title {
+                margin: 0 0 8px 0;
+                font-size: 13px;
+                font-weight: 700;
+                letter-spacing: 1.4px;
+                text-transform: uppercase;
+                color: #333333;
+            }
+            body.template-product #em-product-info-after-buy .em-product-description-content {
+                font-size: 14px;
+                line-height: 1.6;
+                color: #555555;
+            }
+            body.template-product #em-product-info-after-buy .em-product-description-content p:last-child {
+                margin-bottom: 0;
+            }
+            body.template-product #em-product-info-after-buy .em-product-options {
+                border-top: 1px solid #eeeeee;
+                border-bottom: 1px solid #eeeeee;
+            }
+            body.template-product #em-product-info-after-buy details {
+                margin: 0;
+                padding: 0;
+                border-bottom: 1px solid #eeeeee;
+            }
+            body.template-product #em-product-info-after-buy details:last-child {
+                border-bottom: 0;
+            }
+            body.template-product #em-product-info-after-buy summary {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                padding: 15px 0;
+                cursor: pointer;
+                list-style: none;
+                font-size: 13px;
+                font-weight: 700;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                color: #333333;
+                outline: none;
+            }
+            body.template-product #em-product-info-after-buy summary::-webkit-details-marker {
+                display: none;
+            }
+            body.template-product #em-product-info-after-buy summary:after {
+                content: "+";
+                font-size: 18px;
+                font-weight: 300;
+                line-height: 1;
+                color: #333333;
+            }
+            body.template-product #em-product-info-after-buy details[open] summary:after {
+                content: "-";
+            }
+            body.template-product #em-product-info-after-buy .em-option-content {
+                padding: 0 0 15px 0;
+                font-size: 13.5px;
+                line-height: 1.55;
+                color: #555555;
+            }
+            body.template-product #em-product-info-after-buy .em-option-content p,
+            body.template-product #em-product-info-after-buy .em-option-content ul {
+                margin-top: 0;
+                margin-bottom: 8px;
+            }
+            body.template-product #em-product-info-after-buy .em-option-content ul {
+                padding-left: 18px;
+            }
+            body.template-product #em-product-info-after-buy .em-option-content li {
+                margin-bottom: 4px;
+            }
+            body.template-product #em-product-info-after-buy #custom-share-after-info {
+                margin: 15px 0 0 0;
+                padding: 0;
+                border-top: 0;
+                font-size: 13.5px;
+                color: #666666;
+            }
+            body.template-product #em-product-info-after-buy #custom-share-after-info a {
+                color: #4e342e;
+                font-weight: 700;
+                text-decoration: none;
+            }
+            body.template-product #em-product-info-after-buy #custom-share-after-info a:hover {
+                text-decoration: underline;
+            }
+
+            /* AJUSTE V28 - home: carrusel realmente full width sin deformar la imagen */
+            body.template-home .js-main-content,
+            body.template-home .main-content {
+                overflow-x: hidden !important;
+            }
+            body.template-home .js-home-slider,
+            body.template-home .home-slider,
+            body.template-home .section-slider,
+            body.template-home .carrusel-home,
+            body.template-home [data-store="home-slider"],
+            body.template-home [data-store="slider"] {
+                width: 100vw !important;
+                max-width: 100vw !important;
+                min-width: 100vw !important;
+                position: relative !important;
+                left: 50% !important;
+                right: auto !important;
+                margin-left: -50vw !important;
+                margin-right: 0 !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                overflow: hidden !important;
+                box-sizing: border-box !important;
+            }
+            body.template-home .js-home-slider .container,
+            body.template-home .home-slider .container,
+            body.template-home .section-slider .container,
+            body.template-home .carrusel-home .container,
+            body.template-home [data-store="home-slider"] .container,
+            body.template-home [data-store="slider"] .container {
+                width: 100% !important;
+                max-width: none !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+            body.template-home .js-home-slider img,
+            body.template-home .home-slider img,
+            body.template-home .section-slider img,
+            body.template-home .carrusel-home img,
+            body.template-home [data-store="home-slider"] img,
+            body.template-home [data-store="slider"] img {
+                width: 100vw !important;
+                max-width: 100vw !important;
+                min-width: 100vw !important;
+                height: auto !important;
+                max-height: none !important;
+                display: block !important;
+                object-fit: contain !important;
+                object-position: center center !important;
+                margin: 0 auto !important;
+            }
+            body.template-home .js-home-slider picture,
+            body.template-home .home-slider picture,
+            body.template-home .section-slider picture,
+            body.template-home .carrusel-home picture,
+            body.template-home [data-store="home-slider"] picture,
+            body.template-home [data-store="slider"] picture {
+                display: block !important;
+                width: 100vw !important;
+                max-width: 100vw !important;
+            }
+            body.template-home .js-home-slider .slick-slide,
+            body.template-home .home-slider .slick-slide,
+            body.template-home .section-slider .slick-slide,
+            body.template-home .carrusel-home .slick-slide,
+            body.template-home [data-store="home-slider"] .slick-slide,
+            body.template-home [data-store="slider"] .slick-slide,
+            body.template-home .js-home-slider .swiper-slide,
+            body.template-home .home-slider .swiper-slide,
+            body.template-home .section-slider .swiper-slide,
+            body.template-home .carrusel-home .swiper-slide,
+            body.template-home [data-store="home-slider"] .swiper-slide,
+            body.template-home [data-store="slider"] .swiper-slide {
+                overflow: hidden !important;
+            }
+            body.template-home .js-home-slider [style*="background-image"],
+            body.template-home .home-slider [style*="background-image"],
+            body.template-home .section-slider [style*="background-image"],
+            body.template-home .carrusel-home [style*="background-image"],
+            body.template-home [data-store="home-slider"] [style*="background-image"],
+            body.template-home [data-store="slider"] [style*="background-image"] {
+                width: 100vw !important;
+                max-width: 100vw !important;
+                background-size: 100% auto !important;
+                background-repeat: no-repeat !important;
+                background-position: center center !important;
+            }
+
 		</style>
 
 		{# Load async styling not mandatory for first meaningfull paint #}
@@ -79,7 +384,6 @@
 		{{ component('structured-data') }}
 
     </head>
-    {# Only remove this if you want to take away the theme onboarding advices #}
 	{% set show_help = not has_products %}
     {% if "default-background.jpg" | has_custom_image %}
 	<body class="{% if customer %}customer-logged-in{% endif %} template-{{ template | replace('.', '-') }} user-background {% if not settings.bg_repeat %}bg-no-repeat{% endif %}" style="background-position-x:{{ settings.bg_position_x }};">
@@ -89,60 +393,35 @@
 
 	{{ component('nubesdk-slot', { type: "before_main_content" }) }}
 
-	{# Social JS Twitter home widgets and Facebook comments on product page #}
-
 	{% if template == 'home' %}
-
-	    {# Twitter profile feed JS #}
 	    {% if settings.twitter_widget %}
 	        {{ tw_js }}
 	    {% endif %}
-
 	{% endif %}
 
 	{% if template == 'product' %}
-
-	    {# Facebook comment box JS #}
 	    {% if settings.show_product_fb_comment_box %}
 	        {{ fb_js }}
 	    {% endif %}
-
-	    {# Pinterest share button JS #}
 	    {{ pin_js }}
-
 	{% endif %}
-
-	{# Hamburger panel #}
 
 	<nav class="hamburger-panel js-hamburger-panel">
         {% snipplet "navigation/navigation-hamburger-panel.tpl" %}
     </nav>
 
-	{# Overlays #}
-
 	<div class="js-hamburger-overlay js-toggle-hamburger-panel hamburger-overlay backdrop"></div>
 
 	<div class="js-search-backdrop js-toggle-mobile-search search-backdrop backdrop container-fluid full-width" style="display: none;"></div>
 
-    <!--[if lt IE 7]>
-        <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-    <![endif]-->
     <div class="p-relative visible-xs">
-
-    	{# Ad bar mobile #}
-
         {% if settings.ad_bar and settings.ad_text %}
         	<div class="p-relative" data-store="head-adbar">
             	{% snipplet "advertising.tpl" %}
             </div>
         {% endif %}
-
-        {# Mobile nav #}
-
     	{% snipplet "navigation/navigation-mobile.tpl" %}
     </div>
-
-	{# Add notification for quick login cancellation #}
 
 	{% if template == 'home' or template == 'product' %}
 		{% include "snipplets/notification.tpl" with {show_quick_login: true} %}
@@ -152,8 +431,6 @@
 
     <div class="js-main-content main-content">
 		<div class="js-nav-head nav-head" data-store="head-desktop">
-
-			{# Ad bar desktop #}
 
 	        {% if settings.ad_bar and settings.ad_text %}
 	            <div class="hidden-xs">
@@ -194,9 +471,7 @@
 											</div>
 										</form>
 									</div>
-									<div class="js-search-suggest search-suggest">
-			                            {# AJAX container for search suggestions #}
-			                        </div>
+									<div class="js-search-suggest search-suggest"></div>
 								</div>
 								{% if not store.is_catalog and template != 'cart' %}
 									{% if settings.ajax_cart %}
@@ -299,9 +574,7 @@
 									</div>
 								</form>
 							</div>
-							<div class="js-search-suggest search-suggest">
-	                            {# AJAX container for search suggestions #}
-	                        </div>
+							<div class="js-search-suggest search-suggest"></div>
 						</div>
 						{% if not store.is_catalog and template != 'cart' %}
 							{% if settings.ajax_cart %}
@@ -377,7 +650,6 @@
 						</div>
 						{% set has_shipping_payment_logos = settings.payments or settings.shipping %}
 						{% if not (has_products or has_shipping_payment_logos) %}
-							{# This is a snipplet to show the user the payment and send methods the first time they visit the store #}
 							{% snipplet "defaults/show_help_footer.tpl" %}
 						{% elseif has_shipping_payment_logos%}
 							<div class="payment-send col-md-{% if has_seals %}3{% else %}4{% endif %} m-bottom-xs">
@@ -473,7 +745,6 @@
 					<div class="col-md-9 copyright">
 						<p class="text-left text-center-xs m-bottom-xs m-bottom-quarter">
 							{{ "Copyright {1} - {2}. Todos los derechos reservados." | translate( (store.business_name ? store.business_name : store.name) ~ (store.business_id ? ' - ' ~ store.business_id : ''), "now" | date('Y') ) }}
-
 							{{ component('claim-info', {
 									container_classes: "text-left text-center-xs m-bottom-xs font-small d-block m-top-quarter",
 									divider_classes: "m-left-quarter m-right-quarter",
@@ -486,18 +757,6 @@
 						</p>
 					</div>
 					<div class="col-md-3 powered-by text-right text-center-xs font-small">
-						{#
-						La leyenda que aparece debajo de esta linea de código debe mantenerse
-						con las mismas palabras y con su apropiado link a Tiendanube;
-						como especifican nuestros términos de uso: http://www.tiendanube.com/terminos-de-uso .
-						Si quieres puedes modificar el estilo y posición de la leyenda para que se adapte a
-						tu sitio. Pero debe mantenerse visible para los visitantes y con el link funcional.
-						Os créditos que aparece debaixo da linha de código deverá ser mantida com as mesmas
-						palavras e com seu link para Nuvem Shop; como especificam nossos Termos de Uso:
-						http://www.nuvemshop.com.br/termos-de-uso. Se você quiser poderá alterar o estilo
-						e a posição dos créditos para que ele se adque ao seu site. Porém você precisa
-						manter visivél e com um link funcionando.
-						#}
 						{{ new_powered_by_link }}
 					</div>
 				</div>
@@ -505,27 +764,17 @@
 		</div>
 	</div>
 	
-	{# AJAX Cart Panel #}
 	{% if not store.is_catalog and template != 'cart' and settings.ajax_cart %}
-
 		{% snipplet "cart-panel-ajax.tpl" %}
-		{# Add to cart recommendations #}
-
 		{% if settings.add_to_cart_recommendations %}
 			{% snipplet "cart-recommendations-modal.tpl" %}
 		{% endif %}
-
-		{# Cross selling promotion notification on add to cart #}
     	{% snipplet "cross-selling-modal.tpl" %}
 	{% endif %}
 	
-	{# Quickshop modal #}
 	{% snipplet "quick-shop.tpl" %}
-
-	{# Quick login #}
 	{% snipplet "quick-login.tpl" %}
 
-	{# Whatsapp chat button #}
 	{% if store.whatsapp %}
         <a href="{{ store.whatsapp }}" target="_blank" class="js-btn-fixed-bottom btn-whatsapp btn-floating fixed-bottom visible-when-content-ready" aria-label="{{ 'Comunicate por WhatsApp' | translate }}">
             {% include "snipplets/svg/whatsapp.tpl" %}
@@ -533,33 +782,16 @@
     {% endif %}
 
 	{% if cart.free_shipping.cart_has_free_shipping or cart.free_shipping.min_price_free_shipping.min_price %}
-
-		{# Minimum used for free shipping progress messages. Located on header so it can be accesed everywhere with shipping calculator active or inactive #}
-
 		<span class="js-ship-free-min hidden" data-pricemin="{{ cart.free_shipping.min_price_free_shipping.min_price_raw }}"></span>
         <span class="js-free-shipping-config hidden" data-config="{{ cart.free_shipping.allFreeConfigurations }}"></span>
 		<span class="js-cart-subtotal hidden" data-priceraw="{{ cart.subtotal }}"></span>
 		<span class="js-cart-discount hidden" data-priceraw="{{ cart.promotional_discount_amount }}"></span>
 	{% endif %}
 
-{# Javascript used in the store #}
-
 <script type="text/javascript">
-
-	{# Libraries that do NOT depend on other libraries, e.g: Jquery #}
-
 	{% include "static/js/external-no-dependencies.js.tpl" %}
-
-	{# LS.ready.then function waits to Jquery and private Tiendanube JS to be loaded before executing what´s inside #}
-
 	LS.ready.then(function(){
-
-		{# Libraries that requires Jquery to work #}
-
 		{% snipplet "js/external.js.tpl"  %}
-
-		{# Specific store JS functions: product variants, cart, shipping, etc #}
-
 		{% if store.useStoreJsV2() %}
 			{% include "static/js/store-v2.js.tpl" %}
 		{% else %}
@@ -568,7 +800,6 @@
 	});
 </script>
 
-{# Google reCAPTCHA on register page #}
 {% if template == 'account.register' %}
 	{% if not store.hasContactFormsRecaptcha() %}
 	    {{ '//www.google.com/recaptcha/api.js' | script_tag(true) }}
@@ -580,11 +811,7 @@
     </script>
 {% endif %}
 
-{# Google survey JS for Tiendanube/Nuvemshop Survey #}
-
 {{ component('google-survey') }}
-
-{# Store external codes added from admin #}
 
 {% if store.assorted_js %}
 <script>
@@ -594,6 +821,57 @@
     });
 </script>
 {% endif %}
+
+<div id="welcome-popup-overlay" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; opacity:0; transition: opacity 0.4s ease;">
+    <div style="background:white; width:90%; max-width:420px; border-radius:16px; position:relative; box-shadow: 0 20px 45px rgba(0,0,0,0.2); overflow:hidden; text-align:center; padding:35px 25px; box-sizing: border-box;">
+        <button onclick="cerrarPopupBienvenida()" style="position:absolute; right:15px; top:12px; border:none; background:none; font-size:24px; cursor:pointer; color:#aaa; line-height:1; outline:none;">&times;</button>
+        
+        <div id="popup-initial-content">
+            <span style="font-size:32px;">🎁</span>
+            <h3 style="margin:12px 0 6px 0; font-weight:900; font-size:21px; color:#4e342e; text-transform:uppercase; letter-spacing:0.5px; font-family:inherit;">¡Te regalamos $2000!</h3>
+            <p style="margin:0 0 22px 0; font-size:13.5px; color:#666; font-weight:300; line-height:1.5;">Dejanos tu email para sumarte al newsletter y llevate un cupón de regalo inmediato para tu primera compra.</p>
+            <input type="email" id="popup-subscriber-email" placeholder="Tu correo electrónico" style="width:100%; padding:14px; border:1px solid #ddd; border-radius:8px; font-size:14px; margin-bottom:12px; outline:none; text-align:center; box-sizing:border-box; background:#fafafa;">
+            <button onclick="enviarNewsletterPopup()" style="width:100%; padding:14px; background:#4e342e; color:white; border:none; border-radius:8px; font-weight:bold; font-size:13.5px; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px; transition: background 0.2s;">Conseguir mi regalo</button>
+        </div>
+        
+        <div id="popup-success-content" style="display:none;">
+            <span style="font-size:32px;">🎉</span>
+            <h3 style="margin:12px 0 6px 0; font-weight:900; font-size:21px; color:#4e342e; font-family:inherit;">¡Tu código está listo!</h3>
+            <p style="margin:0 0 15px 0; font-size:13.5px; color:#555; font-weight:300;">Ingresá este cupón en tu carrito antes de finalizar el pago:</p>
+            <div style="background:#fdfaf7; border:2px dashed #e0d0cc; padding:14px; border-radius:10px; font-size:19px; font-weight:900; color:#4e342e; font-family:monospace; letter-spacing:1px; margin-bottom:22px; box-sizing: border-box;">ELMENSUAL2000</div>
+            <button onclick="cerrarPopupBienvenida()" style="width:100%; padding:12px; background:#4e342e; color:white; border:none; border-radius:8px; font-weight:bold; font-size:13.5px; cursor:pointer; text-transform:uppercase;">Empezar a comprar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function cerrarPopupBienvenida() {
+    var overlay = document.getElementById('welcome-popup-overlay');
+    if (overlay) {
+        overlay.style.opacity = '0';
+        setTimeout(function() { overlay.style.display = 'none'; }, 400);
+    }
+    localStorage.setItem('popup_bienvenida_elmensual_v1', 'true');
+}
+
+function enviarNewsletterPopup() {
+    var email = document.getElementById('popup-subscriber-email').value.trim();
+    if (email && email.indexOf('@') !== -1) {
+        fetch('https://tu-backend-railway.up.railway.app/api/alertas-stock', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contacto: email, sku: 'NEWSLETTER-POPUP' })
+        }).catch(function(){});
+
+        document.getElementById('popup-initial-content').style.display = 'none';
+        document.getElementById('popup-success-content').style.display = 'block';
+        localStorage.setItem('popup_bienvenida_elmensual_v1', 'true');
+    } else {
+        alert('Por favor, ingresá un correo electrónico válido.');
+    }
+}
+</script>
+
 <div id="talles-modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
     <div style="background:white; padding:0; width:90%; max-width:500px; border-radius:12px; position:relative; max-height:85vh; display:flex; flex-direction:column; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow:hidden;">
         
@@ -609,7 +887,6 @@
         </div>
 
         <div style="overflow-y:auto; padding:15px;">
-            
             <details style="background: #fdfaf7; border: 1px solid #e0d0cc; border-radius: 8px; margin-bottom: 15px; padding: 12px; cursor: pointer;">
                 <summary style="font-weight: bold; color: #4e342e; font-size: 13px; list-style: none; display: flex; align-items: center; justify-content: space-between; outline: none;">
                     <span style="display: flex; align-items: center; gap: 5px;">📐 ¿Cómo tomar tus medidas?</span>
@@ -692,7 +969,6 @@
                     <tr style="border-bottom:1px solid #eee;"><td style="padding:8px; font-weight:bold; color:#4e342e;">16</td><td>70 cm</td><td>91 cm</td></tr>
                 </table>
             </div>
-
         </div>
         
         <div style="padding:15px; border-top:1px solid #eee; background:#fff;">
@@ -720,20 +996,499 @@ function abrirTabTalles(tab) {
 }
 </script>
 
-{# --- SCRIPT DEFINITIVO V24 --- #}
+{# --- SCRIPT DEFINITIVO V28 --- #}
 <script type="text/javascript">
 LS.ready.then(function(){
-    
+
+    function emTextoPlano(elemento) {
+        if (!elemento) return '';
+        var texto = (elemento.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+        if (texto.normalize) {
+            texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+        return texto;
+    }
+
+    function emEscapeHTML(texto) {
+        return String(texto || '').replace(/[&<>"]/g, function(caracter) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;'
+            }[caracter];
+        });
+    }
+
+    function emPrecioDesdeTexto(texto) {
+        var limpio = (texto || '').replace(/[^0-9,\.]/g, '');
+        if (!limpio) return 0;
+
+        var ultimaComa = limpio.lastIndexOf(',');
+        var ultimoPunto = limpio.lastIndexOf('.');
+
+        if (ultimaComa > ultimoPunto) {
+            limpio = limpio.replace(/\./g, '').replace(',', '.');
+        } else {
+            limpio = limpio.replace(/,/g, '');
+        }
+
+        var numero = parseFloat(limpio);
+        return isNaN(numero) ? 0 : numero;
+    }
+
+    function emDentroDeBloquePropio(elemento) {
+        return !!(elemento && elemento.closest && (
+            elemento.closest('#custom-minimal-prices') ||
+            elemento.closest('#custom-share-after-info') ||
+            elemento.closest('#em-product-info-after-buy')
+        ));
+    }
+
+    function emBloqueSeguro(elemento) {
+        if (!elemento || emDentroDeBloquePropio(elemento)) return null;
+
+        var actual = elemento;
+        while (actual && actual !== document.body) {
+            if (emDentroDeBloquePropio(actual)) return null;
+            if (actual.classList && actual.classList.contains('js-product-form')) {
+                return elemento;
+            }
+            var texto = emTextoPlano(actual);
+            if (texto && texto.length <= 380) {
+                return actual;
+            }
+            actual = actual.parentElement;
+        }
+        return elemento;
+    }
+
+    function emOcultar(elemento) {
+        var bloque = emBloqueSeguro(elemento);
+        if (bloque && bloque.style) {
+            bloque.style.setProperty('display', 'none', 'important');
+            bloque.setAttribute('data-em-hidden', 'true');
+        }
+    }
+
+    function emOcultarBloqueYVecinosChicos(elemento) {
+        var bloque = emBloqueSeguro(elemento);
+        if (!bloque || !bloque.style) return;
+
+        bloque.style.setProperty('display', 'none', 'important');
+        bloque.setAttribute('data-em-hidden', 'true');
+
+        var vecino = bloque.nextElementSibling;
+        var pasos = 0;
+        while (vecino && pasos < 4) {
+            var textoVecino = emTextoPlano(vecino);
+            var debeOcultar =
+                textoVecino.indexOf('tus datos cuidados') !== -1 ||
+                textoVecino.indexOf('compra protegida') !== -1 ||
+                textoVecino.indexOf('pago protegido') !== -1 ||
+                textoVecino.indexOf('si no te gusta') !== -1 ||
+                textoVecino === 'cambios y devoluciones';
+
+            if (!debeOcultar || emDentroDeBloquePropio(vecino)) break;
+
+            vecino.style.setProperty('display', 'none', 'important');
+            vecino.setAttribute('data-em-hidden', 'true');
+            vecino = vecino.nextElementSibling;
+            pasos++;
+        }
+    }
+
+    function emCrearBloquePagos() {
+        var contenedorPrecio = document.querySelector('body.template-product .js-price-display, body.template-product .product-price, body.template-product #price_display');
+        if (!contenedorPrecio) return;
+
+        var precioLimpio = emPrecioDesdeTexto(contenedorPrecio.textContent);
+        if (!precioLimpio || precioLimpio <= 0) return;
+
+        var formatoMoneda = new Intl.NumberFormat('es-AR', {
+            style: 'currency',
+            currency: 'ARS',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+
+        var precioTransferencia = precioLimpio * 0.85;
+        var precioEfectivoRetiro = precioLimpio * 0.80;
+        var cuotaTres = precioLimpio / 3;
+
+        var cajaVieja = document.getElementById('custom-minimal-prices');
+        if (cajaVieja) cajaVieja.remove();
+
+        var htmlTablaPagos = '' +
+            '<div id="custom-minimal-prices" aria-label="Opciones de pago">' +
+                '<div class="em-price-row">' +
+                    '<span class="em-price-label">Transferencia <small>15% off</small></span>' +
+                    '<strong class="em-price-amount">' + formatoMoneda.format(precioTransferencia) + '</strong>' +
+                '</div>' +
+                '<div class="em-price-row">' +
+                    '<span class="em-price-label">Efectivo con punto de retiro <small>20% off</small></span>' +
+                    '<strong class="em-price-amount">' + formatoMoneda.format(precioEfectivoRetiro) + '</strong>' +
+                '</div>' +
+                '<div class="em-price-row">' +
+                    '<span class="em-price-label">Hasta 3 cuotas sin inter&eacute;s</span>' +
+                    '<strong class="em-price-amount">' + formatoMoneda.format(cuotaTres) + ' c/u</strong>' +
+                '</div>' +
+                '<div class="em-price-note">Precio de f&aacute;brica: llevando 7 prendas o m&aacute;s obten&eacute;s descuento mayorista autom&aacute;tico.</div>' +
+            '</div>';
+
+        if (contenedorPrecio.parentElement) {
+            contenedorPrecio.parentElement.insertAdjacentHTML('beforeend', htmlTablaPagos);
+        }
+    }
+
+    function emLimpiarNativosProducto() {
+		if (!document.body.classList.contains('template-product')) return;
+
+		var selectoresSeguros = [
+			'.product-promotions',
+			'.js-installments-element',
+			'.js-max-installments-container',
+			'.js-product-detail-installments',
+			'.js-payment-discount-price-product',
+			'.js-payment-discount-price-product-container',
+			'.js-installments-container',
+			'.js-product-installments',
+			'[data-component="installments"]',
+			'[data-store="product-installments"]'
+		];
+
+		selectoresSeguros.forEach(function(selector) {
+			document.querySelectorAll('body.template-product ' + selector).forEach(function(elemento) {
+				if (!emDentroDeBloquePropio(elemento) && !elemento.closest('.js-product-form')) {
+					elemento.style.setProperty('display', 'none', 'important');
+					elemento.setAttribute('data-em-hidden', 'true');
+				}
+			});
+		});
+
+		document.querySelectorAll('body.template-product a, body.template-product button, body.template-product span, body.template-product p, body.template-product div').forEach(function(elemento) {
+			if (emDentroDeBloquePropio(elemento)) return;
+
+			var texto = emTextoPlano(elemento);
+			if (!texto || texto.length > 220) return;
+
+			var esPagoNativo =
+				texto === 'ver medios de pago' ||
+				texto.indexOf('mercado pago') !== -1 ||
+				texto.indexOf('hasta 6 cuotas') !== -1 ||
+				texto.indexOf('6 cuotas fijas') !== -1 ||
+				texto.indexOf('cuotas fijas') !== -1 ||
+				texto.indexOf('descuento pagando con') !== -1 ||
+				texto.indexOf('20% de descuento') !== -1 ||
+				texto.indexOf('15% de descuento') !== -1 ||
+				texto.indexOf('pagando con efectivo') !== -1 ||
+				texto.indexOf('pagando con transferencia') !== -1;
+
+			var esProteccionOCambioNativo =
+				texto.indexOf('compra protegida') !== -1 ||
+				texto.indexOf('pago protegido') !== -1 ||
+				texto.indexOf('tus datos cuidados') !== -1 ||
+				texto.indexOf('tus datos siempre protegidos') !== -1 ||
+				texto.indexOf('si no te gusta') !== -1 ||
+				texto.indexOf('podes cambiarlo') !== -1 ||
+				texto.indexOf('podés cambiarlo') !== -1 ||
+				texto.indexOf('podes devolverlo') !== -1 ||
+				texto.indexOf('podés devolverlo') !== -1 ||
+				texto.indexOf('cambiarlo por otro') !== -1 ||
+				texto === 'cambios y devoluciones';
+
+			var esCompartirViejo =
+				texto.indexOf('compartir pilcha') !== -1;
+
+			if (esPagoNativo || esProteccionOCambioNativo || esCompartirViejo) {
+				elemento.style.setProperty('display', 'none', 'important');
+				elemento.setAttribute('data-em-hidden', 'true');
+
+				var candidato = elemento.parentElement;
+				var pasos = 0;
+
+				while (candidato && candidato !== document.body && pasos < 4) {
+					if (
+						candidato.closest('.js-product-form') ||
+						emDentroDeBloquePropio(candidato)
+					) {
+						break;
+					}
+
+					var textoCandidato = emTextoPlano(candidato);
+
+					if (
+						textoCandidato.length < 520 &&
+						(
+							textoCandidato.indexOf('compra protegida') !== -1 ||
+							textoCandidato.indexOf('pago protegido') !== -1 ||
+							textoCandidato.indexOf('tus datos cuidados') !== -1 ||
+							textoCandidato.indexOf('si no te gusta') !== -1 ||
+							textoCandidato.indexOf('cambios y devoluciones') !== -1 ||
+							textoCandidato.indexOf('descuento pagando con') !== -1 ||
+							textoCandidato.indexOf('mercado pago') !== -1 ||
+							textoCandidato.indexOf('cuotas fijas') !== -1
+						)
+					) {
+						candidato.style.setProperty('display', 'none', 'important');
+						candidato.setAttribute('data-em-hidden', 'true');
+					}
+
+					candidato = candidato.parentElement;
+					pasos++;
+				}
+			}
+		});
+	}
+
+    function emDescripcionProducto() {
+        var selectoresDescripcion = [
+            '[data-store*="product-description"]',
+            '.js-product-description',
+            '.product-description',
+            '.product-detail-description',
+            '#product-description',
+            '.description',
+            '.user-content'
+        ];
+
+        var candidato = null;
+        var mejorLongitud = 0;
+
+        selectoresDescripcion.forEach(function(selector) {
+            document.querySelectorAll('body.template-product ' + selector).forEach(function(elemento) {
+                if (candidato && mejorLongitud > 120) return;
+                if (!elemento || emDentroDeBloquePropio(elemento)) return;
+                if (elemento.closest('form, header, footer, nav, .footer, .nav-head, .js-product-form, .social-networks, .product-sharing, .share-links')) return;
+
+                var texto = emTextoPlano(elemento);
+                if (!texto || texto.length < 25 || texto.length > 5000) return;
+                if (texto.indexOf('formas de pago') !== -1 || texto.indexOf('envios y retiros') !== -1 || texto.indexOf('cambios y devoluciones') !== -1) return;
+                if (texto.indexOf('productos similares') !== -1 || texto.indexOf('inicio productos contacto') !== -1) return;
+                if (texto.indexOf('transferencia') !== -1 && texto.indexOf('cuotas') !== -1) return;
+
+                if (texto.length > mejorLongitud) {
+                    candidato = elemento;
+                    mejorLongitud = texto.length;
+                }
+            });
+        });
+
+        if (candidato) {
+            var clon = candidato.cloneNode(true);
+            clon.querySelectorAll('script, style, iframe, form, input, button, select, textarea').forEach(function(nodo) {
+                nodo.parentNode.removeChild(nodo);
+            });
+            var html = clon.innerHTML.replace(/\s+/g, ' ').trim();
+            if (html) {
+                candidato.style.setProperty('display', 'none', 'important');
+                candidato.setAttribute('data-em-description-source', 'true');
+                return html;
+            }
+        }
+
+        var metaDescripcion = document.querySelector('meta[name="description"]');
+        if (metaDescripcion && metaDescripcion.getAttribute('content')) {
+            var contenido = metaDescripcion.getAttribute('content').trim();
+            if (contenido.length > 25) {
+                return '<p>' + emEscapeHTML(contenido) + '</p>';
+            }
+        }
+
+        return '';
+    }
+
+    function emPuntoInsercionInfoProducto() {
+		var formCompra = document.querySelector('body.template-product .js-product-form');
+		if (formCompra) return formCompra;
+
+		var botonCompra = document.querySelector('body.template-product .js-add-to-cart-btn, body.template-product button[type="submit"], body.template-product input[type="submit"], body.template-product [data-component="add-to-cart"]');
+		if (botonCompra) return botonCompra.parentElement;
+
+		return document.getElementById('custom-minimal-prices');
+	}
+
+    function emInsertarInfoProducto() {
+        if (document.getElementById('em-product-info-after-buy')) return;
+
+        var puntoInsercion = emPuntoInsercionInfoProducto();
+        if (!puntoInsercion || !puntoInsercion.insertAdjacentHTML) return;
+
+        var tituloProducto = document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : document.title;
+        var textoWhatsApp = encodeURIComponent(tituloProducto + ' - ' + window.location.href);
+        var urlWhatsApp = 'https://wa.me/?text=' + textoWhatsApp;
+        var descripcionHtml = emDescripcionProducto();
+
+        var bloqueDescripcion = descripcionHtml ?
+            '<div class="em-product-description">' +
+                '<h3 class="em-product-description-title">Descripci&oacute;n</h3>' +
+                '<div class="em-product-description-content">' + descripcionHtml + '</div>' +
+            '</div>' : '';
+
+        var htmlInfo = '' +
+            '<div id="em-product-info-after-buy">' +
+                bloqueDescripcion +
+                '<div class="em-product-options" aria-label="Informaci&oacute;n del producto">' +
+                    '<details>' +
+                        '<summary>Formas de pago</summary>' +
+                        '<div class="em-option-content">' +
+                            '<ul>' +
+                                '<li>Hasta 3 cuotas sin inter&eacute;s con tarjeta.</li>' +
+                                '<li>15% off por transferencia.</li>' +
+                                '<li>20% off en efectivo con punto de retiro.</li>' +
+                            '</ul>' +
+                        '</div>' +
+                    '</details>' +
+                    '<details>' +
+                        '<summary>Env&iacute;os y retiros</summary>' +
+                        '<div class="em-option-content">' +
+                            '<p>Hacemos env&iacute;os a todo el pa&iacute;s. Tambi&eacute;n pod&eacute;s coordinar retiro por punto de retiro.</p>' +
+                        '</div>' +
+                    '</details>' +
+                    '<details>' +
+                        '<summary>Cambios y devoluciones</summary>' +
+                        '<div class="em-option-content">' +
+                            '<p>Para cambios o devoluciones, escribinos y coordinamos la gesti&oacute;n. La prenda debe estar sin uso y en el mismo estado en que fue entregada.</p>' +
+                        '</div>' +
+                    '</details>' +
+                '</div>' +
+            '</div>';
+
+        puntoInsercion.insertAdjacentHTML('afterend', htmlInfo);
+    }
+
+	function emAgregarWhatsappANativo() {
+		if (!document.body.classList.contains('template-product')) return;
+		if (document.getElementById('em-share-whatsapp-native')) return;
+
+		var shareBox = null;
+
+		document.querySelectorAll('body.template-product div, body.template-product ul').forEach(function(el) {
+			if (shareBox) return;
+
+			var texto = emTextoPlano(el);
+			if (
+				texto.indexOf('compartir') !== -1 &&
+				(
+					el.querySelector('a[href*="facebook"]') ||
+					el.querySelector('a[href*="twitter"]') ||
+					el.querySelector('a[href*="pinterest"]') ||
+					el.querySelector('.svg-inline--fa')
+				)
+			) {
+				shareBox = el;
+			}
+		});
+
+		if (!shareBox) return;
+
+		var tituloProducto = document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : document.title;
+		var urlWhatsApp = 'https://wa.me/?text=' + encodeURIComponent(tituloProducto + ' - ' + window.location.href);
+
+		var link = document.createElement('a');
+		link.id = 'em-share-whatsapp-native';
+		link.href = urlWhatsApp;
+		link.target = '_blank';
+		link.rel = 'noopener';
+		link.setAttribute('aria-label', 'Compartir por WhatsApp');
+		link.style.display = 'inline-flex';
+		link.style.alignItems = 'center';
+		link.style.justifyContent = 'center';
+		link.style.marginLeft = '8px';
+		link.style.verticalAlign = 'middle';
+		link.innerHTML = '<svg width="17" height="17" viewBox="0 0 32 32" aria-hidden="true" style="display:block;"><path fill="currentColor" d="M16.04 3C9.4 3 4 8.4 4 15.04c0 2.12.55 4.18 1.6 6L4 29l8.16-1.52c1.15.62 2.48.95 3.88.95 6.64 0 12.04-5.4 12.04-12.04S22.68 3 16.04 3zm0 22.9c-1.22 0-2.4-.32-3.43-.94l-.25-.15-4.83.9.92-4.7-.17-.27a9.5 9.5 0 0 1-1.47-5.08c0-5.1 4.15-9.25 9.25-9.25s9.25 4.15 9.25 9.25-4.15 10.24-9.27 10.24zm5.06-6.92c-.28-.14-1.64-.8-1.9-.9-.25-.1-.44-.14-.63.14-.18.27-.72.9-.88 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.43-2.25-1.38-.83-.74-1.4-1.66-1.56-1.94-.16-.28-.02-.43.12-.57.13-.13.28-.32.42-.48.14-.16.18-.28.28-.46.1-.18.05-.35-.02-.49-.07-.14-.63-1.52-.86-2.08-.23-.55-.46-.47-.63-.48h-.54c-.18 0-.49.07-.74.35-.25.28-.97.95-.97 2.32s.99 2.7 1.13 2.88c.14.18 1.95 2.98 4.73 4.18.66.28 1.18.45 1.58.58.66.21 1.27.18 1.75.11.53-.08 1.64-.67 1.87-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.19-.53-.33z"/></svg>';
+
+		var ul = shareBox.querySelector('ul');
+		if (ul) {
+			var li = document.createElement('li');
+			li.style.display = 'inline-block';
+			li.style.marginLeft = '6px';
+			li.appendChild(link);
+			ul.appendChild(li);
+		} else {
+			shareBox.appendChild(link);
+		}
+	}
+
+    function emAjustarCarruselHome() {
+        if (!document.body.classList.contains('template-home')) return;
+
+        var selectoresSlider = [
+            '.js-home-slider',
+            '.home-slider',
+            '.section-slider',
+            '.carrusel-home',
+            '[data-store="home-slider"]',
+            '[data-store="slider"]'
+        ];
+
+        selectoresSlider.forEach(function(selector) {
+            document.querySelectorAll(selector).forEach(function(slider) {
+                slider.style.setProperty('width', '100vw', 'important');
+                slider.style.setProperty('max-width', '100vw', 'important');
+                slider.style.setProperty('min-width', '100vw', 'important');
+                slider.style.setProperty('left', '50%', 'important');
+                slider.style.setProperty('margin-left', '-50vw', 'important');
+                slider.style.setProperty('padding-left', '0', 'important');
+                slider.style.setProperty('padding-right', '0', 'important');
+                slider.style.setProperty('overflow', 'hidden', 'important');
+
+                slider.querySelectorAll('img').forEach(function(img) {
+                    img.style.setProperty('width', '100vw', 'important');
+                    img.style.setProperty('max-width', '100vw', 'important');
+                    img.style.setProperty('min-width', '100vw', 'important');
+                    img.style.setProperty('height', 'auto', 'important');
+                    img.style.setProperty('object-fit', 'contain', 'important');
+                    img.style.setProperty('display', 'block', 'important');
+                });
+            });
+        });
+    }
+
+    // DETECTOR PARA LEVANTAR EL POPUP DE BIENVENIDA A LOS 3 SEGUNDOS
+    if (!localStorage.getItem('popup_bienvenida_elmensual_v1')) {
+        setTimeout(function() {
+            var overlayPopup = document.getElementById('welcome-popup-overlay');
+            if (overlayPopup) {
+                overlayPopup.style.display = 'flex';
+                setTimeout(function() { overlayPopup.style.opacity = '1'; }, 50);
+            }
+        }, 3000);
+    }
+
     if (document.body.classList.contains('template-product')) {
-        
-        // 1. ASESINO DE VARIANTES SEGURO
+
+		
+        emCrearBloquePagos();
+        emInsertarInfoProducto();
+        emLimpiarNativosProducto();
+
+        var intentosLimpiezaProducto = 0;
+        var limpiezaProducto = setInterval(function() {
+			emCrearBloquePagos();
+			emInsertarInfoProducto();
+			emLimpiarNativosProducto();
+			intentosLimpiezaProducto++;
+			if (intentosLimpiezaProducto > 40) clearInterval(limpiezaProducto);
+		}, 250);
+
+		var emObserverProducto = new MutationObserver(function() {
+			emLimpiarNativosProducto();
+			emAgregarWhatsappANativo();
+		});
+
+		emObserverProducto.observe(document.body, {
+			childList: true,
+			subtree: true
+		});
+
+        // 1. ASESINO DE VARIANTES SEGURO Y COMPACTO
         var intentos = 0;
         var matarVariante = setInterval(function() {
             var labels = document.querySelectorAll('.js-product-variants label, .form-group label, .variant-label, .js-variant-name');
             labels.forEach(function(label) {
-                var texto = label.textContent.toLowerCase().trim();
+                var texto = emTextoPlano(label);
                 if (texto.indexOf('color') !== -1) {
-                    // Solo ocultamos el div chiquito que envuelve al input, no toda la fila
                     var caja = label.closest('.js-variant-option') || label.closest('.js-product-variants-group') || label.parentElement;
                     if (caja) {
                         caja.style.setProperty('display', 'none', 'important');
@@ -745,46 +1500,46 @@ LS.ready.then(function(){
         }, 100);
 
         var h1Nativo = document.querySelector('h1');
-        
+
         if (h1Nativo) {
             var tituloCompleto = h1Nativo.textContent.trim();
-            
+
             if (tituloCompleto.indexOf('-') !== -1) {
                 var partes = tituloCompleto.split('-');
                 var nombreBase = partes[0].trim();
                 var colorActual = partes[1].trim().toLowerCase();
                 var nombreBaseLower = nombreBase.toLowerCase();
-                
+
                 h1Nativo.textContent = nombreBase;
-                
+
                 // 2. PALETA GLOBAL
                 var paletaColores = {
                     'azul': '#1d3557',
                     'negro': '#1a1a1a',
-                    'marron': '#7c533c', 'marrón': '#7c533c',
+                    'marron': '#7c533c', 'marr\u00f3n': '#7c533c',
                     'chocolate': '#3d2314',
                     'verde': '#2d4a3e',
-                    'bordo': '#58111a', 'bordó': '#58111a', 'bordeaux': '#58111a',
+                    'bordo': '#58111a', 'bord\u00f3': '#58111a', 'bordeaux': '#58111a',
                     'beige': '#ede6d6', 'bege': '#ede6d6',
                     'gris': '#8a8a8a',
                     'blanco': '#ffffff'
                 };
 
-                // 3. MAPEO DE TELAS
+                // 3. MAPEO DE TELAS CORREGIDO AL DETALLE
                 var coloresAInyectar = [];
 
                 if (nombreBaseLower.indexOf('grafa') !== -1) {
                     coloresAInyectar = ['verde', 'negro', 'azul', 'marron'];
-                } 
-                else if (nombreBaseLower.indexOf('poplin') !== -1 || nombreBaseLower.indexOf('poplín') !== -1) {
+                }
+                else if (nombreBaseLower.indexOf('poplin') !== -1 || nombreBaseLower.indexOf('popl\u00edn') !== -1) {
                     coloresAInyectar = ['gris', 'verde', 'azul', 'negro', 'marron', 'beige'];
-                } 
+                }
                 else if (nombreBaseLower.indexOf('corderoy') !== -1) {
                     coloresAInyectar = ['azul', 'verde', 'negro', 'marron', 'chocolate', 'gris'];
-                } 
+                }
                 else if (nombreBaseLower.indexOf('alpargata') !== -1) {
                     coloresAInyectar = ['azul', 'negro', 'bordo'];
-                } 
+                }
                 else {
                     coloresAInyectar = [colorActual];
                 }
@@ -793,74 +1548,130 @@ LS.ready.then(function(){
                     coloresAInyectar.push(colorActual);
                 }
 
-                // 4. RENDER DE BOTONERA INSTANTÁNEA
-                var htmlBotonera = '<div id="custom-color-box" style="margin: 15px 0 5px 0; display: block; clear: both;">' +
-                                   '<div class="color-variants-holder" style="display:flex; gap:10px; flex-wrap: wrap; align-items: center;"></div>' +
-                                   '</div>';
-                h1Nativo.insertAdjacentHTML('afterend', htmlBotonera);
+                // 4. RENDER DE BOTONERA INSTANTANEA
+                if (!document.getElementById('custom-color-box')) {
+                    var htmlBotonera = '<div id="custom-color-box" style="margin: 15px 0 5px 0; display: block; clear: both;">' +
+                                       '<div class="color-variants-holder" style="display:flex; gap:10px; flex-wrap: wrap; align-items: center;"></div>' +
+                                       '</div>';
+                    h1Nativo.insertAdjacentHTML('afterend', htmlBotonera);
+                }
 
                 var contenedor = document.querySelector('.color-variants-holder');
 
-                if (contenedor) {
-                    var currentPath = window.location.pathname; 
+                if (contenedor && !contenedor.getAttribute('data-em-ready')) {
+                    var currentPath = window.location.pathname;
                     var regexColor = new RegExp('-' + colorActual + '/?$');
                     var urlBase = currentPath.replace(regexColor, '');
 
                     coloresAInyectar.forEach(function(color) {
                         var codigoColor = paletaColores[color] || '#CCCCCC';
                         var esElActual = (color === colorActual);
-                        
+
                         var nombreMostrar = color.charAt(0).toUpperCase() + color.slice(1);
-                        if (nombreMostrar === 'Marron') nombreMostrar = 'Marrón';
-                        if (nombreMostrar === 'Bordo') nombreMostrar = 'Bordó';
+                        if (nombreMostrar === 'Marron') nombreMostrar = 'Marr\u00f3n';
+                        if (nombreMostrar === 'Bordo') nombreMostrar = 'Bord\u00f3';
 
                         var urlDestino = urlBase + '-' + color + '/';
-                        
+
                         var estiloCirculo = 'display:inline-block; width:28px; height:28px; border-radius:50%; background-color:' + codigoColor + '; border: 1px solid ' + (esElActual ? '#000' : '#e0e0e0') + '; box-shadow: ' + (esElActual ? '0 0 0 2px #fff, 0 0 0 3px #000' : 'none') + '; cursor:pointer; transition: transform 0.2s;';
-                        
+
                         var botonHtml = '<a href="' + urlDestino + '" title="' + nombreMostrar + '" data-color="' + color + '" style="' + estiloCirculo + '"></a>';
                         contenedor.insertAdjacentHTML('beforeend', botonHtml);
                     });
+                    contenedor.setAttribute('data-em-ready', 'true');
                 }
 
-                // 5. Inyección de la tabla de medidas
+                // 5. Inyeccion de la tabla de medidas
                 var formProducto = document.querySelector('.js-product-form');
-                if (formProducto) {
+                if (formProducto && !document.getElementById('custom-size-guide-link')) {
                     var contenedorTalles = formProducto.querySelector('.js-product-variants') || formProducto.querySelector('.js-variant-option');
                     if (contenedorTalles) {
-                        var htmlLinkTalles = '<div style="margin: 10px 0;">' +
+                        var htmlLinkTalles = '<div id="custom-size-guide-link" style="margin: 8px 0 12px 0; clear:both;">' +
                                              '<a href="#" onclick="document.getElementById(\'talles-modal\').style.display=\'flex\'; return false;" ' +
-                                             'style="color:#5d4037; font-weight:700; text-decoration:underline; font-size:13px; cursor:pointer; display:inline-flex; align-items:center;">' +
-                                             '<svg style="width:16px; height:16px; margin-right:5px; fill:currentColor;" viewBox="0 0 24 24"><path d="M2 4h20v16H2V4zm2 2v12h16V6H4zm2 2h2v8H6V8zm4 0h2v4h-2V8zm4 0h2v8h-2V8z"/></svg>' +
-                                             'Ver tabla de medidas' +
+                                             'style="color:#8d6e63; font-weight:400; text-decoration:underline; font-size:12.5px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">' +
+                                             '&#128208; Ver tabla de medidas e instrucciones' +
                                              '</a></div>';
-                        contenedorTalles.insertAdjacentHTML('beforeend', htmlLinkTalles);
+                        contenedorTalles.insertAdjacentHTML('afterend', htmlLinkTalles);
                     }
                 }
 
-                // 6. Normalización del Canonical
+                // 6. Normalizacion del canonical
                 var tagCanonical = document.querySelector('link[rel="canonical"]');
                 if (tagCanonical) {
-                    var cleanUrl = window.location.origin + currentPath.replace('-' + colorActual + '/');
-                    tagCanonical.setAttribute('href', cleanUrl);
+                    var cleanPath = currentPath.replace(regexColor, '/');
+                    tagCanonical.setAttribute('href', window.location.origin + cleanPath);
                 }
+            }
+        }
+
+        // 7. DETECTOR DE FALTA DE STOCK (AUTOMATICO COMPACTO)
+        var formCompra = document.querySelector('.js-product-form');
+        if (formCompra && !document.getElementById('custom-stock-alert')) {
+            var botonCompra = formCompra.querySelector('.js-add-to-cart-btn, [type="submit"]');
+            var textoBoton = botonCompra ? emTextoPlano(botonCompra) + ' ' + String(botonCompra.value || '').toLowerCase() : '';
+            if (botonCompra && (botonCompra.disabled || botonCompra.classList.contains('disabled') || textoBoton.indexOf('stock') !== -1)) {
+
+                var htmlAlertaStock = '<div id="custom-stock-alert" style="margin-top: 20px; padding: 15px; background: #fafafa; border: 1px solid #eee; border-radius: 8px; clear: both;">' +
+                                      '<p style="margin: 0 0 10px 0; font-size: 13px; font-weight: bold; color: #4e342e;">&#128208; No encontras tu talle? Dejanos tu contacto y te avisamos apenas salga del taller:</p>' +
+                                      '<div style="display: flex; gap: 8px;">' +
+                                      '<input type="email" id="stock-alert-email" placeholder="Tu email o WhatsApp" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; outline: none; background: #fff;">' +
+                                      '<button id="btn-stock-alert" style="padding: 10px 15px; background: #4e342e; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; transition: background 0.2s;">Avisame</button>' +
+                                      '</div>' +
+                                      '<span id="stock-alert-msg" style="display:none; font-size: 12px; margin-top: 8px; color: #4e342e; font-weight: bold;">Perfecto, agendado para darte aviso.</span>' +
+                                      '</div>';
+
+                formCompra.insertAdjacentHTML('beforeend', htmlAlertaStock);
+
+                document.getElementById('btn-stock-alert').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var contacto = document.getElementById('stock-alert-email').value;
+                    var titleText = document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : 'Producto';
+                    var selectedVariantLabel = document.querySelector('.js-sku-value') ? document.querySelector('.js-sku-value').textContent.trim() : 'General';
+                    var skuActual = titleText + ' - ' + selectedVariantLabel;
+
+                    if (contacto) {
+                        fetch('https://tu-backend-railway.up.railway.app/api/alertas-stock', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ contacto: contacto, sku: skuActual })
+                        }).then(function() {
+                            document.getElementById('stock-alert-email').style.display = 'none';
+                            document.getElementById('btn-stock-alert').style.display = 'none';
+                            document.getElementById('stock-alert-msg').style.display = 'block';
+                        }).catch(function(){});
+                    }
+                });
             }
         }
     }
 
-    // 7. Ocultar duplicados en TODO EL SITIO (Catálogo, Home y Productos Similares)
+    if (document.body.classList.contains('template-home')) {
+        emAjustarCarruselHome();
+        var intentosHome = 0;
+        var fixHome = setInterval(function() {
+            emAjustarCarruselHome();
+            intentosHome++;
+            if (intentosHome > 30) clearInterval(fixHome);
+        }, 300);
+    }
+
+    // 8. Ocultar duplicados en TODO EL SITIO (Catalogo, Home y Productos Similares)
     var productosVistos = {};
-    var tarjetasProductos = document.querySelectorAll('.js-product-container, .js-item-product, .item, [data-store="product-item"]');
-    
+    var tarjetasProductos = document.querySelectorAll('.js-product-container, .js-item-product, .item, [data-store="product-item"], .product-container');
+
     tarjetasProductos.forEach(function(tarjeta) {
+        if(document.body.classList.contains('template-product') && tarjeta.classList.contains('js-product-container')) {
+            return;
+        }
+
         var elementoTitulo = tarjeta.querySelector('.js-item-name, .item-name, .product-title, h3, h2');
         if (elementoTitulo) {
             var textoCompleto = elementoTitulo.textContent.trim();
-            
+
             if (textoCompleto.indexOf('-') !== -1) {
                 var partesCat = textoCompleto.split('-');
                 var nombreBaseCat = partesCat[0].trim().toLowerCase();
-                
+
                 if (productosVistos[nombreBaseCat]) {
                     tarjeta.style.setProperty('display', 'none', 'important');
                 } else {
