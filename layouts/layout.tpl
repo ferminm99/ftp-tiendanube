@@ -1002,6 +1002,22 @@ function abrirTabTalles(tab) {
 }
 </script>
 
+{% if template == 'product' and product.variants %}
+<script type="application/json" id="em-product-variants-json">
+[
+{% for variant in product.variants %}
+    {
+        "id": "{{ variant.id }}",
+        "sku": "{{ variant.sku | escape('js') }}",
+        "option1": "{{ variant.option1 | escape('js') }}",
+        "option2": "{{ variant.option2 | escape('js') }}",
+        "option3": "{{ variant.option3 | escape('js') }}"
+    }{% if not loop.last %},{% endif %}
+{% endfor %}
+]
+</script>
+{% endif %}
+
 {# --- SCRIPT DEFINITIVO V28 --- #}
 <script type="text/javascript">
 LS.ready.then(function(){
@@ -1599,47 +1615,385 @@ LS.ready.then(function(){
             }
         }
 
-        // 7. DETECTOR DE FALTA DE STOCK (AUTOMATICO COMPACTO)
+                // 7. DETECTOR DE FALTA DE STOCK (AUTOMATICO COMPACTO) - SKU REAL
         var formCompra = document.querySelector('.js-product-form');
-        if (formCompra && !document.getElementById('custom-stock-alert')) {
-            var botonCompra = formCompra.querySelector('.js-add-to-cart-btn, [type="submit"]');
-            var textoBoton = botonCompra ? emTextoPlano(botonCompra) + ' ' + String(botonCompra.value || '').toLowerCase() : '';
-            if (botonCompra && (botonCompra.disabled || botonCompra.classList.contains('disabled') || textoBoton.indexOf('stock') !== -1)) {
 
-                var htmlAlertaStock = '<div id="custom-stock-alert" style="margin-top: 20px; padding: 15px; background: #fafafa; border: 1px solid #eee; border-radius: 8px; clear: both;">' +
-                                      '<p style="margin: 0 0 10px 0; font-size: 13px; font-weight: bold; color: #4e342e;">&#128208; No encontras tu talle? Dejanos tu contacto y te avisamos apenas salga del taller:</p>' +
-                                      '<div style="display: flex; gap: 8px;">' +
-                                      '<input type="email" id="stock-alert-email" placeholder="Tu email o WhatsApp" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; outline: none; background: #fff;">' +
-                                      '<button id="btn-stock-alert" style="padding: 10px 15px; background: #4e342e; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; transition: background 0.2s;">Avisame</button>' +
-                                      '</div>' +
-                                      '<span id="stock-alert-msg" style="display:none; font-size: 12px; margin-top: 8px; color: #4e342e; font-weight: bold;">Perfecto, agendado para darte aviso.</span>' +
-                                      '</div>';
+        function emStockBotonCompra() {
+            if (!formCompra) return null;
+            return formCompra.querySelector('.js-add-to-cart-btn, .js-addtocart, button[type="submit"], input[type="submit"], [data-component="add-to-cart"]');
+        }
 
-                formCompra.insertAdjacentHTML('beforeend', htmlAlertaStock);
+        function emStockSinStockActual() {
+            var botonCompra = emStockBotonCompra();
+            if (!formCompra || !botonCompra) return false;
 
-                document.getElementById('btn-stock-alert').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    var contacto = document.getElementById('stock-alert-email').value;
-                    var titleText = document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : 'Producto';
-                    var selectedVariantLabel = document.querySelector('.js-sku-value') ? document.querySelector('.js-sku-value').textContent.trim() : 'General';
-                    var skuActual = titleText + ' - ' + selectedVariantLabel;
+            var textoBoton = emTextoPlano(botonCompra) + ' ' + String(botonCompra.value || '').toLowerCase();
+            var textoForm = emTextoPlano(formCompra);
 
-                    if (contacto) {
-                        fetch('https://tu-backend-railway.up.railway.app/api/alertas-stock', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ contacto: contacto, sku: skuActual })
-                        }).then(function() {
-                            document.getElementById('stock-alert-email').style.display = 'none';
-                            document.getElementById('btn-stock-alert').style.display = 'none';
-                            document.getElementById('stock-alert-msg').style.display = 'block';
-                        }).catch(function(){});
-                    }
-                });
+            return (
+                botonCompra.disabled ||
+                botonCompra.classList.contains('disabled') ||
+                botonCompra.getAttribute('disabled') !== null ||
+                textoBoton.indexOf('sin stock') !== -1 ||
+                textoBoton.indexOf('agotado') !== -1 ||
+                textoBoton.indexOf('no disponible') !== -1 ||
+                textoForm.indexOf('sin stock') !== -1 ||
+                textoForm.indexOf('agotado') !== -1
+            );
+        }
+
+        function emStockPuntoAvisame() {
+            if (!formCompra) return null;
+
+            var bloqueVariantes = formCompra.querySelector('.js-product-variants');
+            if (bloqueVariantes) return bloqueVariantes;
+
+            var ultimo = null;
+            var bloques = Array.prototype.slice.call(formCompra.querySelectorAll('.js-variant-option, .form-group, .variant, [class*="variant"]'));
+
+            bloques.forEach(function(bloque) {
+                var texto = emTextoPlano(bloque);
+                if (texto.indexOf('talle') !== -1 || texto.indexOf('largo') !== -1) {
+                    ultimo = bloque;
+                }
+            });
+
+            return ultimo || formCompra;
+        }
+
+        function emStockVariantesJson() {
+            var tag = document.getElementById('em-product-variants-json');
+            if (!tag) return [];
+
+            try {
+                return JSON.parse(tag.textContent || '[]');
+            } catch (e) {
+                console.warn('[EM] Error leyendo variantes para SKU', e);
+                return [];
             }
         }
-    }
 
+        function emStockVariantIdActual() {
+            var params = new URLSearchParams(window.location.search);
+            var variantUrl = params.get('variant');
+
+            if (variantUrl) return String(variantUrl);
+
+            if (!formCompra) return 'No detectado';
+
+            var inputVariant = formCompra.querySelector('input[name="variant_id"], input[name="variation_id"], input[name="id"], input[name="variant"]');
+
+            if (inputVariant && inputVariant.value) {
+                return String(inputVariant.value);
+            }
+
+            return 'No detectado';
+        }
+
+                function emStockSkuReal() {
+            var variantes = emStockVariantesJson();
+
+            var talleSeleccionado = 'No detectado';
+            var largoSeleccionado = 'No detectado';
+            var colorSeleccionado = 'No detectado';
+
+            var selectTalle = formCompra.querySelector('select[name="variation[0]"]');
+            var selectLargo = formCompra.querySelector('select[name="variation[1]"]');
+            var selectColor = formCompra.querySelector('select[name="variation[2]"]');
+
+            if (selectTalle && selectTalle.value) {
+                talleSeleccionado = String(selectTalle.value).trim();
+            }
+
+            if (selectLargo && selectLargo.value) {
+                largoSeleccionado = String(selectLargo.value).trim();
+            }
+
+            if (selectColor && selectColor.value) {
+                colorSeleccionado = String(selectColor.value).trim();
+            }
+
+            function emStockNormalizar(valor) {
+                valor = String(valor || '').trim().toLowerCase();
+
+                if (valor.normalize) {
+                    valor = valor.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                }
+
+                return valor;
+            }
+
+            var varianteEncontrada = null;
+
+            variantes.forEach(function(variant) {
+                if (varianteEncontrada) return;
+
+                var coincideTalle = emStockNormalizar(variant.option1) === emStockNormalizar(talleSeleccionado);
+                var coincideLargo = emStockNormalizar(variant.option2) === emStockNormalizar(largoSeleccionado);
+                var coincideColor = emStockNormalizar(variant.option3) === emStockNormalizar(colorSeleccionado);
+
+                if (coincideTalle && coincideLargo && coincideColor) {
+                    varianteEncontrada = variant;
+                }
+            });
+
+            if (varianteEncontrada) {
+                return {
+                    sku: varianteEncontrada.sku && String(varianteEncontrada.sku).trim()
+                        ? String(varianteEncontrada.sku).trim()
+                        : 'VARIANTE-' + varianteEncontrada.id,
+                    variant_id: String(varianteEncontrada.id),
+                    talle: talleSeleccionado,
+                    largo: largoSeleccionado,
+                    color: colorSeleccionado
+                };
+            }
+
+            console.warn('[EM] No encontré variante por opciones', {
+                talle: talleSeleccionado,
+                largo: largoSeleccionado,
+                color: colorSeleccionado,
+                variantes: variantes
+            });
+
+            return {
+                sku: 'No detectado',
+                variant_id: 'No detectado',
+                talle: talleSeleccionado,
+                largo: largoSeleccionado,
+                color: colorSeleccionado
+            };
+        }
+
+        function emStockTalleActual() {
+            if (!formCompra) return 'No detectado';
+
+            var texto = (formCompra.innerText || '').replace(/\s+/g, ' ').trim();
+            var match = texto.match(/TALLE\s*:\s*([0-9A-Za-z]+)/i);
+
+            if (match && match[1]) {
+                return match[1].trim();
+            }
+
+            var checked = formCompra.querySelector('input[type="radio"]:checked');
+            if (checked) {
+                var label = formCompra.querySelector('label[for="' + checked.id + '"]');
+                if (label && label.textContent.trim()) return label.textContent.trim();
+                if (checked.value) return checked.value;
+            }
+
+            return 'No detectado';
+        }
+
+        function emStockLargoActual() {
+            if (!formCompra) return 'No detectado';
+
+            var selects = formCompra.querySelectorAll('select');
+
+            for (var i = 0; i < selects.length; i++) {
+                var select = selects[i];
+                var contenedor = select.closest('.form-group, .js-variant-option, .js-product-variants') || select.parentElement;
+                var texto = emTextoPlano(contenedor);
+
+                if (texto.indexOf('largo') !== -1 && select.options[select.selectedIndex]) {
+                    return select.options[select.selectedIndex].text.trim();
+                }
+            }
+
+            return 'No detectado';
+        }
+
+        function emStockColorActual() {
+            var texto = (document.title + ' ' + window.location.pathname).toLowerCase();
+            var colores = ['azul', 'negro', 'verde', 'gris', 'beige', 'chocolate', 'marron', 'marrón'];
+            var colorActual = 'No detectado';
+
+            colores.forEach(function(color) {
+                if (texto.indexOf(color) !== -1) {
+                    colorActual = color.replace('marron', 'marrón');
+                }
+            });
+
+            return colorActual;
+        }
+
+        function emStockCrearAvisame() {
+            if (!formCompra) return;
+
+            var punto = emStockPuntoAvisame();
+            var box = document.getElementById('custom-stock-alert');
+
+            if (box) {
+                if (punto && box.previousElementSibling !== punto) {
+                    punto.insertAdjacentElement('afterend', box);
+                }
+                return;
+            }
+
+            var htmlAlertaStock = '<div id="custom-stock-alert" style="display:none; margin: 12px 0 16px 0; padding: 14px; background: #fdfaf7; border: 1px solid #e8ded8; border-radius: 8px; clear: both;">' +
+                                  '<p style="margin: 0 0 8px 0; font-size: 13px; font-weight: bold; color: #4e342e;">Avisame cuando haya stock</p>' +
+                                  '<p style="margin: 0 0 10px 0; font-size: 12.5px; color: #666; line-height: 1.4;">Dejanos tu email y te avisamos cuando vuelva a estar disponible este talle.</p>' +
+                                  '<div style="display: flex; gap: 8px;">' +
+                                  '<input type="email" id="stock-alert-email" placeholder="Correo electrónico" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; outline: none; background: #fff;">' +
+                                  '<button id="btn-stock-alert" type="button" style="padding: 10px 15px; background: #4e342e; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; transition: background 0.2s;">Avisame</button>' +
+                                  '</div>' +
+                                  '<span id="stock-alert-msg" style="display:none; font-size: 12px; margin-top: 8px; color: #4e342e; font-weight: bold;">Perfecto, agendado para darte aviso.</span>' +
+                                  '</div>';
+
+            if (punto && punto !== formCompra) {
+                punto.insertAdjacentHTML('afterend', htmlAlertaStock);
+            } else {
+                formCompra.insertAdjacentHTML('afterbegin', htmlAlertaStock);
+            }
+
+            document.getElementById('btn-stock-alert').addEventListener('click', function(e) {
+                e.preventDefault();
+
+                var inputContacto = document.getElementById('stock-alert-email');
+                var botonAvisame = document.getElementById('btn-stock-alert');
+                var mensajeAvisame = document.getElementById('stock-alert-msg');
+
+                var contacto = inputContacto.value.trim();
+
+                if (!contacto) {
+                    mensajeAvisame.style.display = 'block';
+                    mensajeAvisame.style.color = '#b00020';
+                    mensajeAvisame.textContent = 'Ingresá tu email o WhatsApp.';
+                    return;
+                }
+
+                var skuData = emStockSkuReal();
+
+				function emStockNombreProductoPagina() {
+					var h1 = document.querySelector('h1');
+
+					if (h1 && h1.textContent.trim()) {
+						return h1.textContent.replace(/\s+/g, ' ').trim();
+					}
+
+					return document.title.replace(/\s+/g, ' ').trim();
+				}
+
+				function emStockNombreProductoCompleto() {
+					var ogTitle = document.querySelector('meta[property="og:title"]');
+
+					if (ogTitle && ogTitle.getAttribute('content')) {
+						return ogTitle.getAttribute('content').replace(/\s+/g, ' ').trim();
+					}
+
+					return document.title.replace(/\s+/g, ' ').trim();
+				}
+
+				function emStockUrlProductoBase() {
+					return window.location.origin + window.location.pathname;
+				}
+
+				function emStockUrlProductoVariante(variantId) {
+					var url = new URL(window.location.origin + window.location.pathname);
+
+					if (variantId && variantId !== 'No detectado') {
+						url.searchParams.set('variant', variantId);
+					}
+
+					return url.toString();
+				}
+
+				var productoNombre = emStockNombreProductoPagina();
+				var productoNombreCompleto = emStockNombreProductoCompleto();
+				var productoUrl = emStockUrlProductoBase();
+				var productoUrlVariante = emStockUrlProductoVariante(skuData.variant_id);
+
+				var payload = {
+					contacto: contacto,
+
+					sku: skuData.sku,
+					variant_id: skuData.variant_id,
+
+					talle: skuData.talle,
+					color: skuData.color,
+					largo: skuData.largo,
+
+					producto_nombre: productoNombre,
+					producto_nombre_completo: productoNombreCompleto,
+					producto_url: productoUrl,
+					producto_url_variante: productoUrlVariante
+				};
+
+				console.log('[EM] Payload aviso stock:', payload);
+
+                botonAvisame.disabled = true;
+                botonAvisame.textContent = 'Enviando...';
+
+                fetch('https://elmensual-production.up.railway.app/api/alertas-stock', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }).then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Error al registrar alerta');
+                    }
+
+                    inputContacto.style.display = 'none';
+                    botonAvisame.style.display = 'none';
+
+                    mensajeAvisame.style.display = 'block';
+                    mensajeAvisame.style.color = '#4e342e';
+                    mensajeAvisame.textContent = 'Perfecto, agendado para darte aviso.';
+                }).catch(function() {
+                    botonAvisame.disabled = false;
+                    botonAvisame.textContent = 'Avisame';
+
+                    mensajeAvisame.style.display = 'block';
+                    mensajeAvisame.style.color = '#b00020';
+                    mensajeAvisame.textContent = 'No pudimos registrar el aviso. Probá nuevamente.';
+                });
+            });
+        }
+
+        function emStockActualizarAvisame() {
+            if (!formCompra) return;
+
+            emStockCrearAvisame();
+
+            var box = document.getElementById('custom-stock-alert');
+            if (!box) return;
+
+            box.style.display = emStockSinStockActual() ? 'block' : 'none';
+        }
+
+        if (formCompra) {
+            emStockActualizarAvisame();
+
+            setTimeout(emStockActualizarAvisame, 300);
+            setTimeout(emStockActualizarAvisame, 900);
+            setTimeout(emStockActualizarAvisame, 1600);
+            setTimeout(emStockActualizarAvisame, 2500);
+
+            document.addEventListener('change', function() {
+                setTimeout(emStockActualizarAvisame, 350);
+            }, true);
+
+            document.addEventListener('click', function() {
+                setTimeout(emStockActualizarAvisame, 450);
+            }, true);
+
+            var emObserverStock = new MutationObserver(function() {
+                emStockActualizarAvisame();
+            });
+
+            emObserverStock.observe(formCompra, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['disabled', 'class', 'value']
+            });
+
+            console.log('[EM] Avisame stock compacto activo con SKU real');
+        }
+    }
     if (document.body.classList.contains('template-home')) {
         emAjustarCarruselHome();
         var intentosHome = 0;
@@ -1650,261 +2004,7 @@ LS.ready.then(function(){
         }, 300);
     }
 
-	    // 7. DETECTOR DE FALTA DE STOCK - AVISAME DEBAJO DE TALLE/LARGO
-        if (document.body.classList.contains('template-product')) {
-
-            function emGetStockForm() {
-                return document.querySelector('.js-product-form');
-            }
-
-            function emGetStockButton(formCompra) {
-                if (!formCompra) return null;
-                return formCompra.querySelector('.js-add-to-cart-btn, .js-addtocart, button[type="submit"], input[type="submit"], [data-component="add-to-cart"]');
-            }
-
-            function emGetPuntoAvisame(formCompra) {
-                if (!formCompra) return null;
-
-                // Primero intentamos ponerlo debajo del bloque completo de variantes.
-                // En tu propio código la Guía de Talles usa .js-product-variants, así que este es el punto más seguro.
-                var bloqueVariantes = formCompra.querySelector('.js-product-variants');
-                if (bloqueVariantes) return bloqueVariantes;
-
-                // Si no existe, intentamos debajo del último bloque de variante visible.
-                var bloques = Array.prototype.slice.call(formCompra.querySelectorAll('.js-variant-option, .form-group, .variant, [class*="variant"]'));
-
-                var mejor = null;
-
-                bloques.forEach(function(bloque) {
-                    var texto = emTextoPlano(bloque);
-                    if (
-                        texto.indexOf('largo') !== -1 ||
-                        texto.indexOf('talle') !== -1
-                    ) {
-                        mejor = bloque;
-                    }
-                });
-
-                return mejor || formCompra;
-            }
-
-            function emGetColorSeleccionado() {
-                var path = window.location.pathname.toLowerCase();
-
-                var colores = ['azul', 'negro', 'verde', 'gris', 'beige', 'chocolate', 'marron', 'marrón'];
-                for (var i = 0; i < colores.length; i++) {
-                    if (path.indexOf('-' + colores[i]) !== -1) {
-                        return colores[i].replace('marron', 'marrón');
-                    }
-                }
-
-                var colorActivo = document.querySelector('.color-variants-holder a[style*="0 0 0 3px"], .color-variants-holder a[title]');
-                if (colorActivo) {
-                    return colorActivo.getAttribute('title') || colorActivo.getAttribute('data-color') || 'No detectado';
-                }
-
-                return 'No detectado';
-            }
-
-            function emGetTalleSeleccionado() {
-                var formCompra = emGetStockForm();
-                if (!formCompra) return 'No detectado';
-
-                var textoForm = (formCompra.innerText || '').replace(/\s+/g, ' ').trim();
-
-                var matchTalle = textoForm.match(/TALLE\s*:\s*([0-9A-Za-z]+)/i);
-                if (matchTalle && matchTalle[1]) {
-                    return matchTalle[1].trim();
-                }
-
-                var checked = formCompra.querySelector('input[type="radio"]:checked');
-                if (checked) {
-                    var label = formCompra.querySelector('label[for="' + checked.id + '"]');
-                    if (label && label.textContent.trim()) {
-                        return label.textContent.trim();
-                    }
-                    if (checked.value) return checked.value;
-                }
-
-                return 'No detectado';
-            }
-
-            function emGetLargoSeleccionado() {
-                var formCompra = emGetStockForm();
-                if (!formCompra) return 'No detectado';
-
-                var selects = Array.prototype.slice.call(formCompra.querySelectorAll('select'));
-
-                for (var i = 0; i < selects.length; i++) {
-                    var select = selects[i];
-                    var contenedor = select.closest('.form-group, .js-variant-option, .js-product-variants') || select.parentElement;
-                    var texto = emTextoPlano(contenedor);
-
-                    if (texto.indexOf('largo') !== -1 && select.options[select.selectedIndex]) {
-                        return select.options[select.selectedIndex].text.trim();
-                    }
-                }
-
-                return 'No detectado';
-            }
-
-            function emGetSkuSeleccionado() {
-                var skuVisible = document.querySelector('.js-sku-value, [data-store="product-sku"], .sku-value');
-                if (skuVisible && skuVisible.textContent.trim()) {
-                    return skuVisible.textContent.trim();
-                }
-
-                var formCompra = emGetStockForm();
-                if (formCompra) {
-                    var inputSku = formCompra.querySelector('input[name="sku"], input[name="variant_sku"]');
-                    if (inputSku && inputSku.value) return inputSku.value;
-
-                    var inputVariante = formCompra.querySelector('input[name="variant_id"], input[name="variation_id"], input[name="id"]');
-                    if (inputVariante && inputVariante.value) return 'VARIANTE-' + inputVariante.value;
-                }
-
-                var titulo = document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : document.title;
-                return titulo + ' | Talle ' + emGetTalleSeleccionado() + ' | Largo ' + emGetLargoSeleccionado() + ' | Color ' + emGetColorSeleccionado();
-            }
-
-            function emVarianteSinStock() {
-                var formCompra = emGetStockForm();
-                var botonCompra = emGetStockButton(formCompra);
-
-                if (!formCompra || !botonCompra) return false;
-
-                var textoBoton = emTextoPlano(botonCompra) + ' ' + String(botonCompra.value || '').toLowerCase();
-                var textoForm = emTextoPlano(formCompra);
-
-                return (
-                    botonCompra.disabled ||
-                    botonCompra.classList.contains('disabled') ||
-                    botonCompra.getAttribute('disabled') !== null ||
-                    textoBoton.indexOf('sin stock') !== -1 ||
-                    textoBoton.indexOf('agotado') !== -1 ||
-                    textoBoton.indexOf('no disponible') !== -1 ||
-                    textoForm.indexOf('sin stock') !== -1 ||
-                    textoForm.indexOf('agotado') !== -1
-                );
-            }
-
-            function emCrearAvisameStock() {
-                var formCompra = emGetStockForm();
-                if (!formCompra) return;
-
-                var punto = emGetPuntoAvisame(formCompra);
-                var box = document.getElementById('custom-stock-alert');
-
-                if (box) {
-                    if (punto && box.previousElementSibling !== punto) {
-                        punto.insertAdjacentElement('afterend', box);
-                    }
-                    return;
-                }
-
-                var htmlAlertaStock = '' +
-                    '<div id="custom-stock-alert" style="display:none; margin: 12px 0 16px 0; padding: 14px; background: #fdfaf7; border: 1px solid #e8ded8; border-radius: 8px; clear: both;">' +
-                        '<p style="margin: 0 0 10px 0; font-size: 13px; font-weight: bold; color: #4e342e;">Avisame cuando haya stock</p>' +
-                        '<p style="margin: 0 0 10px 0; font-size: 12.5px; color: #666; line-height: 1.4;">Dejanos tu email y te avisamos cuando vuelva a estar disponible este talle.</p>' +
-                        '<div style="display: flex; gap: 8px;">' +
-                            '<input type="email" id="stock-alert-email" placeholder="Tu email" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; outline: none; background: #fff;">' +
-                            '<button id="btn-stock-alert" type="button" style="padding: 10px 15px; background: #4e342e; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer;">Avisame</button>' +
-                        '</div>' +
-                        '<span id="stock-alert-msg" style="display:none; font-size: 12px; margin-top: 8px; color: #4e342e; font-weight: bold;">Perfecto, te avisamos apenas vuelva a estar disponible.</span>' +
-                    '</div>';
-
-                if (punto) {
-                    punto.insertAdjacentHTML('afterend', htmlAlertaStock);
-                } else {
-                    formCompra.insertAdjacentHTML('afterbegin', htmlAlertaStock);
-                }
-
-                document.getElementById('btn-stock-alert').addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    var input = document.getElementById('stock-alert-email');
-                    var boton = document.getElementById('btn-stock-alert');
-                    var mensaje = document.getElementById('stock-alert-msg');
-
-                    var contacto = input.value.trim();
-
-                    if (!contacto || contacto.indexOf('@') === -1) {
-                        mensaje.style.display = 'block';
-                        mensaje.style.color = '#b00020';
-                        mensaje.textContent = 'Ingresá un email válido.';
-                        return;
-                    }
-
-                    var payload = {
-                        contacto: contacto,
-                        sku: emGetSkuSeleccionado(),
-                        talle: emGetTalleSeleccionado(),
-                        color: emGetColorSeleccionado(),
-                        largo: emGetLargoSeleccionado()
-                    };
-
-                    boton.disabled = true;
-                    boton.textContent = 'Enviando...';
-
-                    fetch('https://elmensual-production.up.railway.app/api/alertas-stock', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify(payload)
-                    })
-                    .then(function(response) {
-                        if (!response.ok) {
-                            throw new Error('Error al registrar alerta');
-                        }
-
-                        input.style.display = 'none';
-                        boton.style.display = 'none';
-
-                        mensaje.style.display = 'block';
-                        mensaje.style.color = '#4e342e';
-                        mensaje.textContent = 'Perfecto, te avisamos apenas vuelva a estar disponible.';
-                    })
-                    .catch(function() {
-                        boton.disabled = false;
-                        boton.textContent = 'Avisame';
-
-                        mensaje.style.display = 'block';
-                        mensaje.style.color = '#b00020';
-                        mensaje.textContent = 'No pudimos registrar el aviso. Probá nuevamente.';
-                    });
-                });
-            }
-
-            function emActualizarAvisameStock() {
-                emCrearAvisameStock();
-
-                var box = document.getElementById('custom-stock-alert');
-                if (!box) return;
-
-                if (emVarianteSinStock()) {
-                    box.style.display = 'block';
-                } else {
-                    box.style.display = 'none';
-                }
-            }
-
-            emActualizarAvisameStock();
-            setTimeout(emActualizarAvisameStock, 300);
-            setTimeout(emActualizarAvisameStock, 900);
-            setTimeout(emActualizarAvisameStock, 1600);
-
-            document.addEventListener('change', function() {
-                setTimeout(emActualizarAvisameStock, 350);
-            }, true);
-
-            document.addEventListener('click', function() {
-                setTimeout(emActualizarAvisameStock, 450);
-            }, true);
-
-            console.log('[EM] Avisame cuando haya stock activo');
-        }
+	   
 
     // 8. Ocultar duplicados en TODO EL SITIO (Catalogo, Home y Productos Similares)
     var productosVistos = {};
