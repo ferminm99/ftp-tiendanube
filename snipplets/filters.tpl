@@ -4,7 +4,7 @@
 
     {% if has_applied_filters %}
         <div class="m-bottom-double m-bottom-xs container-with-border-top-xs">
-            <h4 class="m-bottom p-bottom-half hidden-xs">{{ 'Filtrado por' | translate }}</h5>
+            <h4 class="m-bottom p-bottom-half hidden-xs">{{ 'Filtrado por' | translate }}</h4>
             <strong class="visible-xs m-bottom-half">{{ 'Filtrado por' | translate }}</strong>
             {% for product_filter in product_filters %}
                 {% for value in product_filter.values %}

@@ -16,7 +16,4 @@
     {% endif %}
   </div>
 
-	<div class="visible-xs visible-when-content-ready">
-		{% include "snipplets/filters.tpl" with {applied_filters: true} %}
-	</div>
 {% endif %}

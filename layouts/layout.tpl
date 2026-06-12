@@ -46,6 +46,61 @@
             .color-variants-holder a:hover {
                 transform: scale(1.1);
             }
+
+			/* AJUSTE CATEGORIAS - cards parejas sin estirarlas */
+			body.template-category .js-item-product,
+			body.template-category .js-product-container,
+			body.template-category [data-store="product-item"],
+			body.template-search .js-item-product,
+			body.template-search .js-product-container,
+			body.template-search [data-store="product-item"] {
+				overflow: hidden !important;
+				box-sizing: border-box !important;
+			}
+
+			body.template-category .js-item-product img,
+			body.template-category .js-product-container img,
+			body.template-category [data-store="product-item"] img,
+			body.template-search .js-item-product img,
+			body.template-search .js-product-container img,
+			body.template-search [data-store="product-item"] img {
+				width: 100% !important;
+				height: 285px !important;
+				max-height: 285px !important;
+				object-fit: contain !important;
+				object-position: center bottom !important;
+				display: block !important;
+				margin: 0 auto !important;
+			}
+
+			body.template-category .js-item-name,
+			body.template-category .item-name,
+			body.template-category .product-title,
+			body.template-search .js-item-name,
+			body.template-search .item-name,
+			body.template-search .product-title {
+				height: 56px !important;
+				min-height: 56px !important;
+				max-height: 56px !important;
+				overflow: hidden !important;
+				line-height: 1.25 !important;
+				display: flex !important;
+				align-items: center !important;
+				justify-content: center !important;
+				text-align: center !important;
+			}
+
+			body.template-category .price,
+			body.template-category .item-price,
+			body.template-category .js-price-display,
+			body.template-search .price,
+			body.template-search .item-price,
+			body.template-search .js-price-display {
+				min-height: 32px !important;
+				display: block !important;
+				text-align: center !important;
+			}
+						
             
             /* OCULTAR PAGOS NATIVOS DEL PRODUCTO - SIN TOCAR TALLES NI CARRITO */
 			body.template-product .product-promotions,
@@ -822,63 +877,14 @@
 </script>
 {% endif %}
 
-<div id="welcome-popup-overlay" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; opacity:0; transition: opacity 0.4s ease;">
-    <div style="background:white; width:90%; max-width:420px; border-radius:16px; position:relative; box-shadow: 0 20px 45px rgba(0,0,0,0.2); overflow:hidden; text-align:center; padding:35px 25px; box-sizing: border-box;">
-        <button onclick="cerrarPopupBienvenida()" style="position:absolute; right:15px; top:12px; border:none; background:none; font-size:24px; cursor:pointer; color:#aaa; line-height:1; outline:none;">&times;</button>
-        
-        <div id="popup-initial-content">
-            <span style="font-size:32px;">🎁</span>
-            <h3 style="margin:12px 0 6px 0; font-weight:900; font-size:21px; color:#4e342e; text-transform:uppercase; letter-spacing:0.5px; font-family:inherit;">¡Te regalamos $2000!</h3>
-            <p style="margin:0 0 22px 0; font-size:13.5px; color:#666; font-weight:300; line-height:1.5;">Dejanos tu email para sumarte al newsletter y llevate un cupón de regalo inmediato para tu primera compra.</p>
-            <input type="email" id="popup-subscriber-email" placeholder="Tu correo electrónico" style="width:100%; padding:14px; border:1px solid #ddd; border-radius:8px; font-size:14px; margin-bottom:12px; outline:none; text-align:center; box-sizing:border-box; background:#fafafa;">
-            <button onclick="enviarNewsletterPopup()" style="width:100%; padding:14px; background:#4e342e; color:white; border:none; border-radius:8px; font-weight:bold; font-size:13.5px; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px; transition: background 0.2s;">Conseguir mi regalo</button>
-        </div>
-        
-        <div id="popup-success-content" style="display:none;">
-            <span style="font-size:32px;">🎉</span>
-            <h3 style="margin:12px 0 6px 0; font-weight:900; font-size:21px; color:#4e342e; font-family:inherit;">¡Tu código está listo!</h3>
-            <p style="margin:0 0 15px 0; font-size:13.5px; color:#555; font-weight:300;">Ingresá este cupón en tu carrito antes de finalizar el pago:</p>
-            <div style="background:#fdfaf7; border:2px dashed #e0d0cc; padding:14px; border-radius:10px; font-size:19px; font-weight:900; color:#4e342e; font-family:monospace; letter-spacing:1px; margin-bottom:22px; box-sizing: border-box;">ELMENSUAL2000</div>
-            <button onclick="cerrarPopupBienvenida()" style="width:100%; padding:12px; background:#4e342e; color:white; border:none; border-radius:8px; font-weight:bold; font-size:13.5px; cursor:pointer; text-transform:uppercase;">Empezar a comprar</button>
-        </div>
-    </div>
-</div>
-
-<script>
-function cerrarPopupBienvenida() {
-    var overlay = document.getElementById('welcome-popup-overlay');
-    if (overlay) {
-        overlay.style.opacity = '0';
-        setTimeout(function() { overlay.style.display = 'none'; }, 400);
-    }
-    localStorage.setItem('popup_bienvenida_elmensual_v1', 'true');
-}
-
-function enviarNewsletterPopup() {
-    var email = document.getElementById('popup-subscriber-email').value.trim();
-    if (email && email.indexOf('@') !== -1) {
-        fetch('https://tu-backend-railway.up.railway.app/api/alertas-stock', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contacto: email, sku: 'NEWSLETTER-POPUP' })
-        }).catch(function(){});
-
-        document.getElementById('popup-initial-content').style.display = 'none';
-        document.getElementById('popup-success-content').style.display = 'block';
-        localStorage.setItem('popup_bienvenida_elmensual_v1', 'true');
-    } else {
-        alert('Por favor, ingresá un correo electrónico válido.');
-    }
-}
-</script>
 
 <div id="talles-modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
     <div style="background:white; padding:0; width:90%; max-width:500px; border-radius:12px; position:relative; max-height:85vh; display:flex; flex-direction:column; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow:hidden;">
         
-        <div style="background:#4e342e; color:white; padding:15px; text-align:center; position:relative;">
-            <h3 style="margin:0; font-weight:900; font-size:18px;">Guía Oficial de Medidas</h3>
-            <button onclick="document.getElementById('talles-modal').style.display='none'" style="position:absolute; right:15px; top:12px; border:none; background:none; font-size:24px; cursor:pointer; color:white;">&times;</button>
-        </div>
+        <div style="background:#fff; color:#333; padding:18px 20px 14px; text-align:left; position:relative; border-bottom:1px solid #eeeeee;">
+			<h3 style="margin:0; font-weight:700; font-size:20px; letter-spacing:0.3px;">Guía de Talles</h3>
+			<button onclick="document.getElementById('talles-modal').style.display='none'" style="position:absolute; right:16px; top:13px; border:none; background:none; font-size:24px; cursor:pointer; color:#777;">&times;</button>
+		</div>
         
         <div style="display:flex; justify-content:space-between; border-bottom:2px solid #f0f0f0; background:#fafafa;">
             <button id="btn-alto" onclick="abrirTabTalles('alto')" style="flex:1; border:none; border-bottom:3px solid #4e342e; background:none; padding:12px 5px; font-weight:bold; cursor:pointer; color:#4e342e; font-size:13px;">Tiro Alto</button>
@@ -889,7 +895,7 @@ function enviarNewsletterPopup() {
         <div style="overflow-y:auto; padding:15px;">
             <details style="background: #fdfaf7; border: 1px solid #e0d0cc; border-radius: 8px; margin-bottom: 15px; padding: 12px; cursor: pointer;">
                 <summary style="font-weight: bold; color: #4e342e; font-size: 13px; list-style: none; display: flex; align-items: center; justify-content: space-between; outline: none;">
-                    <span style="display: flex; align-items: center; gap: 5px;">📐 ¿Cómo tomar tus medidas?</span>
+                    <span style="display: flex; align-items: center; gap: 5px;">Como saber mi talle?</span>
                     <span style="font-size: 10px; color: #8d6e63;">Desplegar ▼</span>
                 </summary>
                 <div style="margin-top: 12px; font-size: 12.5px; color: #444; cursor: default; line-height: 1.4; border-top: 1px dashed #e0d0cc; padding-top: 10px;">
@@ -904,7 +910,7 @@ function enviarNewsletterPopup() {
             
             <div id="tab-alto">
                 <div style="background:#e8f4f8; color:#0277bd; padding:8px; border-radius:6px; font-size:12px; text-align:center; margin-bottom:15px;">
-                    📏 <strong>Largos Especiales:</strong> Corto (-6cm) / Largo (+6cm)
+                     <strong>Largos Especiales:</strong> Corto (-6cm) / Largo (+6cm)
                 </div>
                 <table style="width:100%; border-collapse:collapse; text-align:center; font-size:14px;">
                     <tr style="background:#f4f4f4; border-bottom:2px solid #ddd;">
@@ -1445,17 +1451,6 @@ LS.ready.then(function(){
         });
     }
 
-    // DETECTOR PARA LEVANTAR EL POPUP DE BIENVENIDA A LOS 3 SEGUNDOS
-    if (!localStorage.getItem('popup_bienvenida_elmensual_v1')) {
-        setTimeout(function() {
-            var overlayPopup = document.getElementById('welcome-popup-overlay');
-            if (overlayPopup) {
-                overlayPopup.style.display = 'flex';
-                setTimeout(function() { overlayPopup.style.opacity = '1'; }, 50);
-            }
-        }, 3000);
-    }
-
     if (document.body.classList.contains('template-product')) {
 
 		
@@ -1586,12 +1581,12 @@ LS.ready.then(function(){
                 if (formProducto && !document.getElementById('custom-size-guide-link')) {
                     var contenedorTalles = formProducto.querySelector('.js-product-variants') || formProducto.querySelector('.js-variant-option');
                     if (contenedorTalles) {
-                        var htmlLinkTalles = '<div id="custom-size-guide-link" style="margin: 8px 0 12px 0; clear:both;">' +
-                                             '<a href="#" onclick="document.getElementById(\'talles-modal\').style.display=\'flex\'; return false;" ' +
-                                             'style="color:#8d6e63; font-weight:400; text-decoration:underline; font-size:12.5px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">' +
-                                             '&#128208; Ver tabla de medidas e instrucciones' +
-                                             '</a></div>';
-                        contenedorTalles.insertAdjacentHTML('afterend', htmlLinkTalles);
+                        var htmlLinkTalles = '<div id="custom-size-guide-link" style="margin: 0 0 14px 0; clear:both;">' +
+							'<a href="#" onclick="document.getElementById(\'talles-modal\').style.display=\'flex\'; return false;" ' +
+							'style="color:#4e342e; font-weight:700; text-decoration:none; font-size:15px; letter-spacing:0.2px; cursor:pointer; display:inline-block; border-bottom:1px solid #d8c9c2; padding-bottom:2px;">' +
+							'Guía de Talles' +
+							'</a></div>';
+                        contenedorTalles.insertAdjacentHTML('beforebegin', htmlLinkTalles);
                     }
                 }
 
@@ -1655,6 +1650,262 @@ LS.ready.then(function(){
         }, 300);
     }
 
+	    // 7. DETECTOR DE FALTA DE STOCK - AVISAME DEBAJO DE TALLE/LARGO
+        if (document.body.classList.contains('template-product')) {
+
+            function emGetStockForm() {
+                return document.querySelector('.js-product-form');
+            }
+
+            function emGetStockButton(formCompra) {
+                if (!formCompra) return null;
+                return formCompra.querySelector('.js-add-to-cart-btn, .js-addtocart, button[type="submit"], input[type="submit"], [data-component="add-to-cart"]');
+            }
+
+            function emGetPuntoAvisame(formCompra) {
+                if (!formCompra) return null;
+
+                // Primero intentamos ponerlo debajo del bloque completo de variantes.
+                // En tu propio código la Guía de Talles usa .js-product-variants, así que este es el punto más seguro.
+                var bloqueVariantes = formCompra.querySelector('.js-product-variants');
+                if (bloqueVariantes) return bloqueVariantes;
+
+                // Si no existe, intentamos debajo del último bloque de variante visible.
+                var bloques = Array.prototype.slice.call(formCompra.querySelectorAll('.js-variant-option, .form-group, .variant, [class*="variant"]'));
+
+                var mejor = null;
+
+                bloques.forEach(function(bloque) {
+                    var texto = emTextoPlano(bloque);
+                    if (
+                        texto.indexOf('largo') !== -1 ||
+                        texto.indexOf('talle') !== -1
+                    ) {
+                        mejor = bloque;
+                    }
+                });
+
+                return mejor || formCompra;
+            }
+
+            function emGetColorSeleccionado() {
+                var path = window.location.pathname.toLowerCase();
+
+                var colores = ['azul', 'negro', 'verde', 'gris', 'beige', 'chocolate', 'marron', 'marrón'];
+                for (var i = 0; i < colores.length; i++) {
+                    if (path.indexOf('-' + colores[i]) !== -1) {
+                        return colores[i].replace('marron', 'marrón');
+                    }
+                }
+
+                var colorActivo = document.querySelector('.color-variants-holder a[style*="0 0 0 3px"], .color-variants-holder a[title]');
+                if (colorActivo) {
+                    return colorActivo.getAttribute('title') || colorActivo.getAttribute('data-color') || 'No detectado';
+                }
+
+                return 'No detectado';
+            }
+
+            function emGetTalleSeleccionado() {
+                var formCompra = emGetStockForm();
+                if (!formCompra) return 'No detectado';
+
+                var textoForm = (formCompra.innerText || '').replace(/\s+/g, ' ').trim();
+
+                var matchTalle = textoForm.match(/TALLE\s*:\s*([0-9A-Za-z]+)/i);
+                if (matchTalle && matchTalle[1]) {
+                    return matchTalle[1].trim();
+                }
+
+                var checked = formCompra.querySelector('input[type="radio"]:checked');
+                if (checked) {
+                    var label = formCompra.querySelector('label[for="' + checked.id + '"]');
+                    if (label && label.textContent.trim()) {
+                        return label.textContent.trim();
+                    }
+                    if (checked.value) return checked.value;
+                }
+
+                return 'No detectado';
+            }
+
+            function emGetLargoSeleccionado() {
+                var formCompra = emGetStockForm();
+                if (!formCompra) return 'No detectado';
+
+                var selects = Array.prototype.slice.call(formCompra.querySelectorAll('select'));
+
+                for (var i = 0; i < selects.length; i++) {
+                    var select = selects[i];
+                    var contenedor = select.closest('.form-group, .js-variant-option, .js-product-variants') || select.parentElement;
+                    var texto = emTextoPlano(contenedor);
+
+                    if (texto.indexOf('largo') !== -1 && select.options[select.selectedIndex]) {
+                        return select.options[select.selectedIndex].text.trim();
+                    }
+                }
+
+                return 'No detectado';
+            }
+
+            function emGetSkuSeleccionado() {
+                var skuVisible = document.querySelector('.js-sku-value, [data-store="product-sku"], .sku-value');
+                if (skuVisible && skuVisible.textContent.trim()) {
+                    return skuVisible.textContent.trim();
+                }
+
+                var formCompra = emGetStockForm();
+                if (formCompra) {
+                    var inputSku = formCompra.querySelector('input[name="sku"], input[name="variant_sku"]');
+                    if (inputSku && inputSku.value) return inputSku.value;
+
+                    var inputVariante = formCompra.querySelector('input[name="variant_id"], input[name="variation_id"], input[name="id"]');
+                    if (inputVariante && inputVariante.value) return 'VARIANTE-' + inputVariante.value;
+                }
+
+                var titulo = document.querySelector('h1') ? document.querySelector('h1').textContent.trim() : document.title;
+                return titulo + ' | Talle ' + emGetTalleSeleccionado() + ' | Largo ' + emGetLargoSeleccionado() + ' | Color ' + emGetColorSeleccionado();
+            }
+
+            function emVarianteSinStock() {
+                var formCompra = emGetStockForm();
+                var botonCompra = emGetStockButton(formCompra);
+
+                if (!formCompra || !botonCompra) return false;
+
+                var textoBoton = emTextoPlano(botonCompra) + ' ' + String(botonCompra.value || '').toLowerCase();
+                var textoForm = emTextoPlano(formCompra);
+
+                return (
+                    botonCompra.disabled ||
+                    botonCompra.classList.contains('disabled') ||
+                    botonCompra.getAttribute('disabled') !== null ||
+                    textoBoton.indexOf('sin stock') !== -1 ||
+                    textoBoton.indexOf('agotado') !== -1 ||
+                    textoBoton.indexOf('no disponible') !== -1 ||
+                    textoForm.indexOf('sin stock') !== -1 ||
+                    textoForm.indexOf('agotado') !== -1
+                );
+            }
+
+            function emCrearAvisameStock() {
+                var formCompra = emGetStockForm();
+                if (!formCompra) return;
+
+                var punto = emGetPuntoAvisame(formCompra);
+                var box = document.getElementById('custom-stock-alert');
+
+                if (box) {
+                    if (punto && box.previousElementSibling !== punto) {
+                        punto.insertAdjacentElement('afterend', box);
+                    }
+                    return;
+                }
+
+                var htmlAlertaStock = '' +
+                    '<div id="custom-stock-alert" style="display:none; margin: 12px 0 16px 0; padding: 14px; background: #fdfaf7; border: 1px solid #e8ded8; border-radius: 8px; clear: both;">' +
+                        '<p style="margin: 0 0 10px 0; font-size: 13px; font-weight: bold; color: #4e342e;">Avisame cuando haya stock</p>' +
+                        '<p style="margin: 0 0 10px 0; font-size: 12.5px; color: #666; line-height: 1.4;">Dejanos tu email y te avisamos cuando vuelva a estar disponible este talle.</p>' +
+                        '<div style="display: flex; gap: 8px;">' +
+                            '<input type="email" id="stock-alert-email" placeholder="Tu email" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; outline: none; background: #fff;">' +
+                            '<button id="btn-stock-alert" type="button" style="padding: 10px 15px; background: #4e342e; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer;">Avisame</button>' +
+                        '</div>' +
+                        '<span id="stock-alert-msg" style="display:none; font-size: 12px; margin-top: 8px; color: #4e342e; font-weight: bold;">Perfecto, te avisamos apenas vuelva a estar disponible.</span>' +
+                    '</div>';
+
+                if (punto) {
+                    punto.insertAdjacentHTML('afterend', htmlAlertaStock);
+                } else {
+                    formCompra.insertAdjacentHTML('afterbegin', htmlAlertaStock);
+                }
+
+                document.getElementById('btn-stock-alert').addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    var input = document.getElementById('stock-alert-email');
+                    var boton = document.getElementById('btn-stock-alert');
+                    var mensaje = document.getElementById('stock-alert-msg');
+
+                    var contacto = input.value.trim();
+
+                    if (!contacto || contacto.indexOf('@') === -1) {
+                        mensaje.style.display = 'block';
+                        mensaje.style.color = '#b00020';
+                        mensaje.textContent = 'Ingresá un email válido.';
+                        return;
+                    }
+
+                    var payload = {
+                        contacto: contacto,
+                        sku: emGetSkuSeleccionado(),
+                        talle: emGetTalleSeleccionado(),
+                        color: emGetColorSeleccionado(),
+                        largo: emGetLargoSeleccionado()
+                    };
+
+                    boton.disabled = true;
+                    boton.textContent = 'Enviando...';
+
+                    fetch('https://elmensual-production.up.railway.app/api/alertas-stock', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(function(response) {
+                        if (!response.ok) {
+                            throw new Error('Error al registrar alerta');
+                        }
+
+                        input.style.display = 'none';
+                        boton.style.display = 'none';
+
+                        mensaje.style.display = 'block';
+                        mensaje.style.color = '#4e342e';
+                        mensaje.textContent = 'Perfecto, te avisamos apenas vuelva a estar disponible.';
+                    })
+                    .catch(function() {
+                        boton.disabled = false;
+                        boton.textContent = 'Avisame';
+
+                        mensaje.style.display = 'block';
+                        mensaje.style.color = '#b00020';
+                        mensaje.textContent = 'No pudimos registrar el aviso. Probá nuevamente.';
+                    });
+                });
+            }
+
+            function emActualizarAvisameStock() {
+                emCrearAvisameStock();
+
+                var box = document.getElementById('custom-stock-alert');
+                if (!box) return;
+
+                if (emVarianteSinStock()) {
+                    box.style.display = 'block';
+                } else {
+                    box.style.display = 'none';
+                }
+            }
+
+            emActualizarAvisameStock();
+            setTimeout(emActualizarAvisameStock, 300);
+            setTimeout(emActualizarAvisameStock, 900);
+            setTimeout(emActualizarAvisameStock, 1600);
+
+            document.addEventListener('change', function() {
+                setTimeout(emActualizarAvisameStock, 350);
+            }, true);
+
+            document.addEventListener('click', function() {
+                setTimeout(emActualizarAvisameStock, 450);
+            }, true);
+
+            console.log('[EM] Avisame cuando haya stock activo');
+        }
+
     // 8. Ocultar duplicados en TODO EL SITIO (Catalogo, Home y Productos Similares)
     var productosVistos = {};
     var tarjetasProductos = document.querySelectorAll('.js-product-container, .js-item-product, .item, [data-store="product-item"], .product-container');
@@ -1681,7 +1932,163 @@ LS.ready.then(function(){
             }
         }
     });
-});
+
+	// FIX DIRECTO: ocultar "Sin stock" falso en cards de listados
+	function emOcultarSinStockEnListados() {
+		if (document.body.classList.contains('template-product')) return;
+
+		var cards = document.querySelectorAll(
+			'.js-product-container, .js-item-product, [data-store="product-item"], .product-container'
+		);
+
+		cards.forEach(function(card) {
+			if (!card || !card.querySelector('img')) return;
+
+			card.querySelectorAll('*').forEach(function(el) {
+				var texto = emTextoPlano(el);
+
+				if (
+					texto === 'sin stock' ||
+					texto === 'sinstock' ||
+					(texto.indexOf('sin stock') !== -1 && texto.length <= 30)
+				) {
+					el.style.setProperty('display', 'none', 'important');
+
+					var padre = el.parentElement;
+					var pasos = 0;
+
+					while (padre && padre !== card && pasos < 3) {
+						var textoPadre = emTextoPlano(padre);
+
+						if (
+							textoPadre === 'sin stock' ||
+							textoPadre === 'sinstock' ||
+							(textoPadre.indexOf('sin stock') !== -1 && textoPadre.length <= 40)
+						) {
+							padre.style.setProperty('display', 'none', 'important');
+						}
+
+						padre = padre.parentElement;
+						pasos++;
+					}
+				}
+			});
+		});
+	}
+
+	emOcultarSinStockEnListados();
+
+	setTimeout(emOcultarSinStockEnListados, 300);
+	setTimeout(emOcultarSinStockEnListados, 900);
+	setTimeout(emOcultarSinStockEnListados, 1800);
+
+	var emObserverSinStock = new MutationObserver(function() {
+		emOcultarSinStockEnListados();
+	});
+
+	emObserverSinStock.observe(document.body, {
+		childList: true,
+		subtree: true
+	});
+
+	console.log('[EM] Fix Sin Stock en listados activo');
+
+
+	// FIX FINAL: ocultar solo el segundo bloque "FILTRADO POR" usando posición visual
+	function emFixFiltradoPorDuplicado() {
+		if (
+			!document.body.classList.contains('template-category') &&
+			!document.body.classList.contains('template-search')
+		) {
+			return;
+		}
+
+		// Primero deshacemos ocultamientos de fixes anteriores
+		document.querySelectorAll('[data-em-filtrado-duplicado-final]').forEach(function(el) {
+			el.style.removeProperty('display');
+			el.removeAttribute('data-em-filtrado-duplicado-final');
+		});
+
+		var titulosFiltrado = [];
+
+		document.querySelectorAll('h1, h2, h3, h4, h5, div, span').forEach(function(el) {
+			var texto = emTextoPlano(el);
+			if (texto !== 'filtrado por') return;
+
+			var rect = el.getBoundingClientRect();
+
+			// Nos quedamos solo con títulos del sidebar izquierdo
+			if (
+				rect.width > 260 ||
+				rect.left > 320 ||
+				rect.height > 80
+			) {
+				return;
+			}
+
+			titulosFiltrado.push(el);
+		});
+
+		if (titulosFiltrado.length <= 1) return;
+
+		// Ordenamos por posición vertical real
+		titulosFiltrado.sort(function(a, b) {
+			return a.getBoundingClientRect().top - b.getBoundingClientRect().top;
+		});
+
+		var segundoTitulo = titulosFiltrado[1];
+		var startY = segundoTitulo.getBoundingClientRect().top + window.scrollY - 4;
+
+		var tituloFiltros = null;
+
+		document.querySelectorAll('h1, h2, h3, h4, h5, div, span').forEach(function(el) {
+			var texto = emTextoPlano(el);
+			if (texto !== 'filtros') return;
+
+			var rect = el.getBoundingClientRect();
+			var y = rect.top + window.scrollY;
+
+			if (
+				rect.left < 320 &&
+				rect.width < 260 &&
+				y > startY
+			) {
+				if (!tituloFiltros || y < (tituloFiltros.getBoundingClientRect().top + window.scrollY)) {
+					tituloFiltros = el;
+				}
+			}
+		});
+
+		var endY = tituloFiltros
+			? tituloFiltros.getBoundingClientRect().top + window.scrollY - 4
+			: startY + 180;
+
+		document.querySelectorAll('body *').forEach(function(el) {
+			var rect = el.getBoundingClientRect();
+			var y = rect.top + window.scrollY;
+			var texto = emTextoPlano(el);
+
+			if (!texto) return;
+
+			if (
+				rect.left < 320 &&
+				rect.width < 280 &&
+				y >= startY &&
+				y < endY &&
+				texto.length < 120
+			) {
+				el.style.setProperty('display', 'none', 'important');
+				el.setAttribute('data-em-filtrado-duplicado-final', 'true');
+			}
+		});
+
+		console.log('[EM] Fix filtrado duplicado aplicado. Titulos encontrados:', titulosFiltrado.length);
+	}
+
+	emFixFiltradoPorDuplicado();
+	setTimeout(emFixFiltradoPorDuplicado, 500);
+	setTimeout(emFixFiltradoPorDuplicado, 1500);
+	});
 </script>
 </body>
 </html>
