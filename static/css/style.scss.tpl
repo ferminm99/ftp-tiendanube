@@ -819,6 +819,40 @@ style.scss.tpl
   }
 }
 
+.banner-wrapper .textbanner {
+  &-image:before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.45) 100%);
+    content: '';
+    pointer-events: none;
+  }
+  &-text {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    margin: 0;
+    padding: 24px 28px;
+    background: transparent;
+  }
+  &-shape {
+    display: none;
+  }
+  &-title {
+    margin-bottom: 0;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 26px;
+  }
+}
+
 {# /*  // Social widgets */ #}
 
 .fb-page{
@@ -1050,6 +1084,11 @@ style.scss.tpl
       visibility: visible;
       opacity: 1;
     }
+  }
+  &.is-hover-open > .desktop-nav-list{
+    display: block;
+    visibility: visible;
+    opacity: 1;
   }
   .desktop-nav-list:hover{
     display: block;
@@ -1630,6 +1669,17 @@ style.scss.tpl
 {# /* // Max width 767px */ #}
 
 @media (max-width: 767px) {
+
+  
+  .banner-wrapper .textbanner {
+    &-text {
+      padding: 18px 20px;
+    }
+    &-title {
+      font-size: 18px;
+      line-height: 22px;
+    }
+  }
 
   {# /* //// Components */ #}
 

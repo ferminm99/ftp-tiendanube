@@ -54,16 +54,24 @@
 			body.template-search .js-item-product,
 			body.template-search .js-product-container,
 			body.template-search [data-store="product-item"] {
-				overflow: hidden !important;
 				box-sizing: border-box !important;
 			}
 
-			body.template-category .js-item-product img,
-			body.template-category .js-product-container img,
-			body.template-category [data-store="product-item"] img,
-			body.template-search .js-item-product img,
-			body.template-search .js-product-container img,
-			body.template-search [data-store="product-item"] img {
+			body.template-category .js-item-product .item-image-container,
+			body.template-category .js-product-container .item-image-container,
+			body.template-category [data-store="product-item"] .item-image-container,
+			body.template-search .js-item-product .item-image-container,
+			body.template-search .js-product-container .item-image-container,
+			body.template-search [data-store="product-item"] .item-image-container {
+				overflow: hidden !important;
+			}
+
+			body.template-category .js-item-product img.js-item-image.item-image,
+			body.template-category .js-product-container img.js-item-image.item-image,
+			body.template-category [data-store="product-item"] img.js-item-image.item-image,
+			body.template-search .js-item-product img.js-item-image.item-image,
+			body.template-search .js-product-container img.js-item-image.item-image,
+			body.template-search [data-store="product-item"] img.js-item-image.item-image {
 				width: 100% !important;
 				height: 285px !important;
 				max-height: 285px !important;
@@ -71,6 +79,18 @@
 				object-position: center bottom !important;
 				display: block !important;
 				margin: 0 auto !important;
+			}
+
+			@media (max-width: 767px) {
+				body.template-category .js-item-product img.js-item-image.item-image,
+				body.template-category .js-product-container img.js-item-image.item-image,
+				body.template-category [data-store="product-item"] img.js-item-image.item-image,
+				body.template-search .js-item-product img.js-item-image.item-image,
+				body.template-search .js-product-container img.js-item-image.item-image,
+				body.template-search [data-store="product-item"] img.js-item-image.item-image {
+					height: auto !important;
+					max-height: 250px !important;
+				}
 			}
 
 			body.template-category .js-item-name,

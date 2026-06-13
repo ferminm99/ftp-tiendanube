@@ -1252,6 +1252,19 @@ select {
   }
 }
 
+.banner-wrapper .textbanner {
+  &-text {
+    color: #fff;
+    background: transparent;
+  }
+  &-shape:before {
+    border-color: transparent;
+  }
+  &-title {
+    color: #fff;
+  }
+}
+
 .module-image {
   background-color: darken($main-background, 3%);
 }

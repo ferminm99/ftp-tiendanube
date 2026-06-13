@@ -621,6 +621,44 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
   opacity: 0.5; 
 }
 
+.banner-wrapper .textbanner-image:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.45) 100%);
+  content: '';
+  pointer-events: none;
+}
+
+.banner-wrapper .textbanner-text {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 24px 28px;
+  color: #fff;
+  background: transparent;
+}
+
+.banner-wrapper .textbanner-shape {
+  display: none;
+}
+
+.banner-wrapper .textbanner-title {
+  margin-bottom: 0;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 26px;
+  color: #fff;
+}
+
+
 .services{
   clear: both;
   opacity: 0.8;
@@ -1770,6 +1808,14 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
 
   .textbanner-text {
     margin: -30px 20px 40px 20px;
+  }
+  .banner-wrapper .textbanner-text {
+    margin: 0;
+    padding: 18px 20px;
+  }
+  .banner-wrapper .textbanner-title {
+    font-size: 18px;
+    line-height: 22px;
   }
   .textbanner-button.btn {
     height: 40px;
