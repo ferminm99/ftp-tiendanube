@@ -369,6 +369,23 @@ body {
 .placeholder-fade{
   background-color:rgba($main-background, 0.4);
 }
+.home-slider .slide-container {
+  background-color: rgba($main-background, 0.65);
+}
+.home-slider .placeholder-fade {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(90deg, rgba($main-background, 0.75) 0%, rgba($primary-color, 0.18) 50%, rgba($main-background, 0.75) 100%);
+  opacity: 1;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.home-slider .swiper-lazy-loaded + .placeholder-fade {
+  opacity: 0;
+}
 .placeholder-empty-overlay {
   background-color: rgba($main-foreground, .8);
   opacity: 0;

@@ -20,11 +20,9 @@
 							{% endif %}
 
 								{% set has_img_sizes = slide.width and slide.height %}
-								{% set first_slide_img_without_sizes = loop.first and not has_img_sizes %}
 								{% set first_slide_img_with_sizes = loop.first and has_img_sizes %}
 
 								{% set apply_lazy_load = 
-									first_slide_img_without_sizes or 
 									(has_two_sliders and first_slide_img_with_sizes and not mobile) or 
 									not loop.first
 								%}

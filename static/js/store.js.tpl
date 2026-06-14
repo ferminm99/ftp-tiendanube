@@ -677,7 +677,17 @@ LS.ready.then(function() {
             '.js-home-slider',
             {
                 preloadImages: false,
-                lazy: true,
+                 lazy: {
+                    loadPrevNext: true,
+                    loadPrevNextAmount: 2,
+                    loadOnTransitionStart: true,
+                },
+                watchSlidesVisibility: true,
+                speed: 650,
+                effect: 'fade',
+                fadeEffect: {
+                    crossFade: true,
+                },
                 {% if settings.slider | length > 1 %}
                     loop: true,
                 {% endif %}
@@ -714,7 +724,17 @@ LS.ready.then(function() {
             '.js-home-slider-mobile',
             {
                 preloadImages: false,
-                lazy: true,
+                lazy: {
+                    loadPrevNext: true,
+                    loadPrevNextAmount: 2,
+                    loadOnTransitionStart: true,
+                },
+                watchSlidesVisibility: true,
+                speed: 650,
+                effect: 'fade',
+                fadeEffect: {
+                    crossFade: true,
+                },
                 {% if settings.slider_mobile | length > 1 %}
                     loop: true,
                 {% endif %}

@@ -754,12 +754,22 @@ DOMContentLoaded.addEventOrExecute(() => {
         };
     {% endif %}
 
-    var homeSwiper = null;
+     var homeSwiper = null;
     createSwiper(
         '.js-home-slider',
         {
             preloadImages: false,
-            lazy: true,
+            lazy: {
+                loadPrevNext: true,
+                loadPrevNextAmount: 2,
+                loadOnTransitionStart: true,
+            },
+            watchSlidesVisibility: true,
+            speed: 650,
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true,
+            },
             {% if settings.slider | length > 1 %}
                 loop: true,
             {% endif %}
@@ -796,7 +806,17 @@ DOMContentLoaded.addEventOrExecute(() => {
         '.js-home-slider-mobile',
         {
             preloadImages: false,
-            lazy: true,
+            lazy: {
+                loadPrevNext: true,
+                loadPrevNextAmount: 2,
+                loadOnTransitionStart: true,
+            },
+            watchSlidesVisibility: true,
+            speed: 650,
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true,
+            },
             {% if settings.slider_mobile | length > 1 %}
                 loop: true,
             {% endif %}
